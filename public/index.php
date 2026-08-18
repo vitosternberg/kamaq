@@ -6,14 +6,45 @@ use App\Core\Router;
 
 define('BASE_PATH', dirname(__DIR__));
 
+// Autoloader PSR-4 con fallback case-insensitive.
+// Necesario porque en el hosting (Linux) las carpetas están en minúsculas
+// (core, controllers, models) pero los namespaces usan mayúsculas (Core, Controllers, Models).
 spl_autoload_register(function (string $class): void {
     $prefix = 'App\\';
-    if (str_starts_with($class, $prefix)) {
-        $relative = str_replace('\\', '/', substr($class, strlen($prefix)));
-        $file = BASE_PATH . '/app/' . $relative . '.php';
-        if (is_file($file)) {
-            require $file;
+    if (!str_starts_with($class, $prefix)) {
+        return;
+    }
+
+    $relative = str_replace('\\', '/', substr($class, strlen($prefix)));
+    $file = BASE_PATH . '/app/' . $relative . '.php';
+
+    if (is_file($file)) {
+        require $file;
+        return;
+    }
+
+    $segments = explode('/', $relative);
+    $dir = BASE_PATH . '/app';
+    foreach ($segments as $i => $segment) {
+        $target = ($i === count($segments) - 1) ? $segment . '.php' : $segment;
+        $entries = scandir($dir);
+        $matched = null;
+        if ($entries !== false) {
+            foreach ($entries as $entry) {
+                if (strcasecmp($entry, $target) === 0) {
+                    $matched = $entry;
+                    break;
+                }
+            }
         }
+        if ($matched === null) {
+            return;
+        }
+        $dir .= '/' . $matched;
+    }
+
+    if (is_file($dir)) {
+        require $dir;
     }
 });
 
