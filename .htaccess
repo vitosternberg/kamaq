@@ -1,0 +1,8 @@
+RewriteEngine On
+
+# Bloquear acceso directo a carpetas internas
+RewriteRule ^(app|database|docs)(/|$) - [F,L]
+
+# Ruteo a la carpeta pública (útil si el dominio apunta a la raíz del proyecto)
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteRule ^(.*)$ public/$1 [L]

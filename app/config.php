@@ -1,0 +1,30 @@
+<?php
+
+// Configuración base de KAMAQ.
+// Los valores locales (credenciales de BD) van en config.local.php (no versionado).
+
+$config = [
+    'app_name' => 'KAMAQ',
+    'app_url' => '',               // '' si el sitio está en la raíz del dominio
+    'db_host' => 'localhost',
+    'db_port' => '3306',
+    'db_name' => 'kamaq',
+    'db_user' => 'root',
+    'db_pass' => '',
+    'db_charset' => 'utf8mb4',
+    'currency' => 'CLP',
+    'currency_symbol' => '$',
+    'currency_decimals' => 0,
+    'contact_email' => 'contacto@kamaq.cl',
+    'ga_ads_id' => 'AW-18397361572', // Google Ads (gtag.js)
+];
+
+$localFile = __DIR__ . '/config.local.php';
+if (is_file($localFile)) {
+    $local = require $localFile;
+    if (is_array($local)) {
+        $config = array_merge($config, $local);
+    }
+}
+
+return $config;

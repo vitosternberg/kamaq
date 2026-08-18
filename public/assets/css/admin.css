@@ -1,0 +1,75 @@
+:root {
+  --brand: #8a5a2b;
+  --brand-dark: #6d461f;
+  --text: #2b2b2b;
+  --muted: #6b6b6b;
+  --bg: #f4f2ee;
+  --card: #fff;
+  --border: #e0ddd6;
+  --danger: #b3261e;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; color: var(--text); background: var(--bg); }
+
+.admin-wrap { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+
+.admin-sidebar { background: #2b2b2b; color: #eaeaea; padding: 20px 0; }
+.admin-sidebar .brand { padding: 0 20px 18px; font-size: 18px; font-weight: 800; letter-spacing: 2px; color: #fff; border-bottom: 1px solid #444; margin-bottom: 12px; }
+.admin-sidebar a { display: block; color: #d5d5d5; padding: 10px 20px; }
+.admin-sidebar a:hover, .admin-sidebar a.active { background: #3a3a3a; color: #fff; }
+
+.admin-main { padding: 24px 28px; }
+.admin-main h1 { margin: 0 0 20px; font-size: 24px; }
+
+.topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.stat { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
+.stat .num { font-size: 28px; font-weight: 800; color: var(--brand); }
+.stat .label { color: var(--muted); font-size: 14px; }
+
+table.data { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 10px; overflow: hidden; }
+table.data th, table.data td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+table.data th { background: #f6f1e8; font-size: 14px; }
+table.data img.thumb { width: 48px; height: 48px; object-fit: cover; border-radius: 6px; }
+
+.badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.badge--ok { background: #e8f5e9; color: #1e7a2a; }
+.badge--off { background: #fdecea; color: #b3261e; }
+
+.btn { display: inline-block; padding: 9px 16px; border-radius: 6px; border: 1px solid transparent; cursor: pointer; font-size: 14px; font-weight: 600; text-align: center; }
+.btn--primary { background: var(--brand); color: #fff; }
+.btn--primary:hover { background: var(--brand-dark); }
+.btn--outline { background: transparent; border-color: var(--brand); color: var(--brand); }
+.btn--danger { background: var(--danger); color: #fff; }
+.btn--sm { padding: 6px 12px; font-size: 13px; }
+
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 14px; }
+.form-control { width: 100%; padding: 9px 11px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; font-family: inherit; }
+textarea.form-control { min-height: 110px; }
+.form-hint { color: var(--muted); font-size: 12px; margin-top: 4px; }
+.form-check { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+
+.flash { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; }
+.flash--success { background: #e8f5e9; color: #1e7a2a; border: 1px solid #b7dfb9; }
+.flash--error { background: #fdecea; color: #b3261e; border: 1px solid #f5c6c0; }
+
+.login-box { max-width: 380px; margin: 80px auto; }
+.login-box h1 { text-align: center; }
+
+.image-list { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+.image-item { position: relative; }
+.image-item img { width: 90px; height: 90px; object-fit: cover; border-radius: 6px; border: 2px solid transparent; }
+.image-item img.primary { border-color: var(--brand); }
+.image-item .label { font-size: 11px; color: var(--muted); text-align: center; }
+
+@media (max-width: 768px) {
+  .admin-wrap { grid-template-columns: 1fr; }
+  .admin-sidebar { display: flex; overflow-x: auto; padding: 8px; }
+  .admin-sidebar .brand { border: 0; margin: 0; padding: 8px 12px; }
+  .admin-sidebar a { padding: 8px 12px; white-space: nowrap; }
+}

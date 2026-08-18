@@ -1,0 +1,21 @@
+# Config local (credenciales reales — no subir al repo)
+app/config.local.php
+
+# Imágenes subidas desde el panel de administración
+/public/uploads/
+
+# Dependencias / build (si algún día usas Composer o Node)
+/vendor/
+/node_modules/
+
+# Logs y temporales
+*.log
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+.vscode/
+
+# Estado interno de Codewhale
+.codewhale/
