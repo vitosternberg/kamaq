@@ -6,7 +6,7 @@ use App\Core\Cart;
 use App\Core\Controller;
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\Setting;
+use App\Models\ShippingMethod;
 
 class CheckoutController extends Controller
 {
@@ -16,11 +16,13 @@ class CheckoutController extends Controller
         if (!$items) {
             redirect('carrito');
         }
+        $methods = ShippingMethod::active();
         $this->view('checkout/index', [
             'pageTitle' => 'Finalizar compra — KAMAQ',
             'items' => $items,
             'subtotal' => Cart::subtotal(),
-            'shipping' => (float) (Setting::get('shipping_default', '0') ?? 0),
+            'shippingMethods' => $methods,
+            'shipping' => $methods ? (float) $methods[0]['price'] : 0.0,
             'breadcrumbs' => [
                 ['label' => 'Inicio', 'url' => url('')],
                 ['label' => 'Carrito', 'url' => url('carrito')],
@@ -49,7 +51,8 @@ class CheckoutController extends Controller
         }
 
         $subtotal = Cart::subtotal();
-        $shipping = (float) (Setting::get('shipping_default', '0') ?? 0);
+        $method = $this->selectedMethod((int) ($_POST['shipping_method_id'] ?? 0));
+        $shipping = $method ? (float) $method['price'] : 0.0;
         $total = $subtotal + $shipping;
         $orderNumber = 'KQ-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(4)));
 
@@ -64,6 +67,7 @@ class CheckoutController extends Controller
             'notes' => trim($_POST['notes'] ?? ''),
             'subtotal' => $subtotal,
             'shipping' => $shipping,
+            'shipping_method' => $method ? $method['name'] : null,
             'total' => $total,
             'payment_method' => 'pagaaqui',
             'payment_status' => 'pendiente',
@@ -97,5 +101,15 @@ class CheckoutController extends Controller
                 ['label' => 'Gracias', 'url' => null],
             ],
         ]);
+    }
+
+    private function selectedMethod(int $id): ?array
+    {
+        foreach (ShippingMethod::active() as $method) {
+            if ((int) $method['id'] === $id) {
+                return $method;
+            }
+        }
+        return null;
     }
 }

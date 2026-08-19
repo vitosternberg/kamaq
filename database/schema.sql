@@ -81,6 +81,7 @@ CREATE TABLE IF NOT EXISTS orders (
   notes TEXT NULL,
   subtotal DECIMAL(12,2) NOT NULL DEFAULT 0,
   shipping DECIMAL(12,2) NOT NULL DEFAULT 0,
+  shipping_method VARCHAR(120) NULL,
   total DECIMAL(12,2) NOT NULL DEFAULT 0,
   payment_method VARCHAR(40) NULL,
   payment_status VARCHAR(24) NOT NULL DEFAULT 'pendiente',
@@ -104,6 +105,16 @@ CREATE TABLE IF NOT EXISTS order_items (
   CONSTRAINT fk_order_items_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS shipping_methods (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  name VARCHAR(120) NOT NULL,
+  price DECIMAL(12,2) NOT NULL DEFAULT 0,
+  is_active TINYINT(1) NOT NULL DEFAULT 1,
+  sort_order INT NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 INSERT IGNORE INTO settings (`key`, `value`) VALUES
   ('site_name', 'KAMAQ'),
   ('currency', 'CLP'),
@@ -122,3 +133,9 @@ INSERT IGNORE INTO categories (id, parent_id, name, slug, sort_order, is_active)
   (5, NULL, 'Cumpleaños', 'cumpleanos', 5, 1),
   (6, NULL, 'Cajas de Vino', 'cajas-de-vino', 6, 1),
   (7, NULL, 'Joyeros', 'joyeros', 7, 1);
+
+INSERT IGNORE INTO shipping_methods (id, name, price, is_active, sort_order) VALUES
+  (1, 'Gratis', 0, 1, 1),
+  (2, 'Express', 4990, 1, 2),
+  (3, 'Dentro de la RM', 3990, 1, 3),
+  (4, 'Fuera de la RM', 6990, 1, 4);

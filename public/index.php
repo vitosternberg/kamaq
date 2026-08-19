@@ -93,5 +93,9 @@ $router->get('admin/pedidos/{id}', 'App\Controllers\Admin\OrderController@show')
 $router->post('admin/pedidos/estado/{id}', 'App\Controllers\Admin\OrderController@updateStatus');
 $router->get('admin/clientes', 'App\Controllers\Admin\CustomerController@index');
 $router->get('admin/clientes/{email}', 'App\Controllers\Admin\CustomerController@show');
+$router->get('admin/envios', 'App\Controllers\Admin\ShippingController@index');
+$router->post('admin/envios/guardar', 'App\Controllers\Admin\ShippingController@store');
+$router->post('admin/envios/actualizar/{id}', 'App\Controllers\Admin\ShippingController@update');
+$router->post('admin/envios/eliminar/{id}', 'App\Controllers\Admin\ShippingController@delete');
 
 $router->dispatch($_SERVER['REQUEST_METHOD'] ?? 'GET', $_SERVER['REQUEST_URI'] ?? '/');
