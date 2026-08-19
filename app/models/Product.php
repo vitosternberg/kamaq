@@ -91,6 +91,40 @@ class Product extends Model
         )->fetchAll();
     }
 
+    public static function applyPricePercent(float $percent, ?int $categoryId = null): int
+    {
+        $factor = 1 + ($percent / 100);
+        $sql = 'UPDATE products SET price = ROUND(price * ?, 0),
+                sale_price = CASE WHEN sale_price IS NOT NULL THEN ROUND(sale_price * ?, 0) ELSE sale_price END';
+        $params = [$factor, $factor];
+        if ($categoryId !== null) {
+            $sql .= ' WHERE category_id = ?';
+            $params[] = $categoryId;
+        }
+        $stmt = static::db()->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->rowCount();
+    }
+
+    public static function adjustStock(int $delta, ?int $categoryId = null): int
+    {
+        $sql = 'UPDATE products SET stock = GREATEST(stock + ?, 0)';
+        $params = [$delta];
+        if ($categoryId !== null) {
+            $sql .= ' WHERE category_id = ?';
+            $params[] = $categoryId;
+        }
+        $stmt = static::db()->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->rowCount();
+    }
+
+    public static function decrementStock(int $productId, int $quantity): void
+    {
+        $stmt = static::db()->prepare('UPDATE products SET stock = GREATEST(stock - ?, 0) WHERE id = ?');
+        $stmt->execute([$quantity, $productId]);
+    }
+
     public static function slugExists(string $slug, ?int $excludeId = null): bool
     {
         $sql = 'SELECT COUNT(*) FROM products WHERE slug = ?';

@@ -17,6 +17,7 @@ $isAuth = \App\Core\Auth::check();
     <div class="brand"><?= e(config('app_name', 'KAMAQ')) ?></div>
     <a href="<?= url('admin') ?>">Dashboard</a>
     <a href="<?= url('admin/productos') ?>">Productos</a>
+    <a href="<?= url('admin/inventario') ?>">Inventario</a>
     <a href="<?= url('admin/categorias') ?>">Categorías</a>
     <a href="<?= url('admin/pedidos') ?>">Pedidos</a>
     <a href="<?= url('admin/clientes') ?>">Clientes</a>

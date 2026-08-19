@@ -14,4 +14,13 @@ class Setting extends Model
         $row = static::find($key);
         return $row ? $row['value'] : $default;
     }
+
+    public static function set(string $key, $value): void
+    {
+        $stmt = static::db()->prepare(
+            'INSERT INTO settings (`key`, `value`) VALUES (?, ?)
+             ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)'
+        );
+        $stmt->execute([$key, (string) $value]);
+    }
 }

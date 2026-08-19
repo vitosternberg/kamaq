@@ -97,5 +97,10 @@ $router->get('admin/envios', 'App\Controllers\Admin\ShippingController@index');
 $router->post('admin/envios/guardar', 'App\Controllers\Admin\ShippingController@store');
 $router->post('admin/envios/actualizar/{id}', 'App\Controllers\Admin\ShippingController@update');
 $router->post('admin/envios/eliminar/{id}', 'App\Controllers\Admin\ShippingController@delete');
+$router->get('admin/inventario', 'App\Controllers\Admin\InventoryController@index');
+$router->post('admin/inventario/actualizar', 'App\Controllers\Admin\InventoryController@updateProduct');
+$router->post('admin/inventario/umbral', 'App\Controllers\Admin\InventoryController@saveThreshold');
+$router->post('admin/inventario/precios', 'App\Controllers\Admin\InventoryController@bulkPrice');
+$router->post('admin/inventario/stock', 'App\Controllers\Admin\InventoryController@bulkStock');
 
 $router->dispatch($_SERVER['REQUEST_METHOD'] ?? 'GET', $_SERVER['REQUEST_URI'] ?? '/');

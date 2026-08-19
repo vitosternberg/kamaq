@@ -123,7 +123,8 @@ INSERT IGNORE INTO settings (`key`, `value`) VALUES
   ('contact_email', 'contacto@kamaq.cl'),
   ('contact_phone', ''),
   ('whatsapp', ''),
-  ('shipping_default', '0');
+  ('shipping_default', '0'),
+  ('low_stock_threshold', '5');
 
 INSERT IGNORE INTO categories (id, parent_id, name, slug, sort_order, is_active) VALUES
   (1, NULL, 'Regalos Corporativos', 'regalos-corporativos', 1, 1),

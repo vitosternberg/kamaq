@@ -6,6 +6,7 @@ use App\Core\Cart;
 use App\Core\Controller;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Product;
 use App\Models\ShippingMethod;
 
 class CheckoutController extends Controller
@@ -83,6 +84,7 @@ class CheckoutController extends Controller
                 'quantity' => $item['quantity'],
                 'subtotal' => $item['subtotal'],
             ]);
+            Product::decrementStock((int) $item['product']['id'], (int) $item['quantity']);
         }
 
         Cart::clear();
