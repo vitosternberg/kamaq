@@ -91,5 +91,7 @@ $router->post('admin/productos/imagen/eliminar/{id}', 'App\Controllers\Admin\Pro
 $router->get('admin/pedidos', 'App\Controllers\Admin\OrderController@index');
 $router->get('admin/pedidos/{id}', 'App\Controllers\Admin\OrderController@show');
 $router->post('admin/pedidos/estado/{id}', 'App\Controllers\Admin\OrderController@updateStatus');
+$router->get('admin/clientes', 'App\Controllers\Admin\CustomerController@index');
+$router->get('admin/clientes/{email}', 'App\Controllers\Admin\CustomerController@show');
 
 $router->dispatch($_SERVER['REQUEST_METHOD'] ?? 'GET', $_SERVER['REQUEST_URI'] ?? '/');

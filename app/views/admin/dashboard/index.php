@@ -4,6 +4,7 @@
   <div class="stat"><div class="num"><?= (int) $stats['products'] ?></div><div class="label">Productos</div></div>
   <div class="stat"><div class="num"><?= (int) $stats['categories'] ?></div><div class="label">Categorías</div></div>
   <div class="stat"><div class="num"><?= (int) $stats['orders'] ?></div><div class="label">Pedidos</div></div>
+  <div class="stat"><div class="num"><?= (int) $stats['customers'] ?></div><div class="label">Clientes</div></div>
 </div>
 
 <h2>Últimos pedidos</h2>
