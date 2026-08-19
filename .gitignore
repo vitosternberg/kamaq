@@ -1,6 +1,9 @@
 # Config local (credenciales reales — no subir al repo)
 app/config.local.php
 
+# Credenciales de deploy del hosting
+.deploy.env
+
 # Imágenes subidas desde el panel de administración
 /public/uploads/
 
