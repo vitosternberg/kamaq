@@ -11,7 +11,7 @@ class CustomerController extends Controller
     public function index(): void
     {
         Auth::requireLogin();
-        $customers = Customer::all();
+        $customers = Customer::allCustomers();
 
         $totalOrders = 0;
         $totalRevenue = 0.0;

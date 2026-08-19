@@ -20,7 +20,7 @@ class Customer extends Model
         )->fetchColumn();
     }
 
-    public static function all(): array
+    public static function allCustomers(): array
     {
         $rows = static::db()->query(
             'SELECT customer_email AS email,
