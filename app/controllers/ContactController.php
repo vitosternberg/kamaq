@@ -11,6 +11,10 @@ class ContactController extends Controller
         $this->view('contact/index', [
             'pageTitle' => 'Contacto — KAMAQ',
             'metaDescription' => 'Contáctanos para cotizar regalos personalizados y corporativos.',
+            'breadcrumbs' => [
+                ['label' => 'Inicio', 'url' => url('')],
+                ['label' => 'Contacto', 'url' => null],
+            ],
         ]);
     }
 

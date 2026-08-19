@@ -9,7 +9,7 @@
     <tbody>
     <?php foreach ($categories as $c): ?>
       <tr>
-        <td><?= e($c['name']) ?></td>
+        <td><?= str_repeat('— ', (int) ($c['depth'] ?? 0)) . e($c['name']) ?></td>
         <td><?= e($c['slug']) ?></td>
         <td><?= (int) $c['product_count'] ?></td>
         <td><?= (int) $c['sort_order'] ?></td>

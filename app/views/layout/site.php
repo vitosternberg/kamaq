@@ -16,6 +16,29 @@ $adsId = (string) config('ga_ads_id', '');
 <meta property="og:title" content="<?= e($pageTitle) ?>">
 <meta property="og:description" content="<?= e($metaDescription) ?>">
 <?php if (!empty($ogImage)): ?><meta property="og:image" content="<?= e($ogImage) ?>"><?php endif; ?>
+<?php if (!empty($breadcrumbs)): ?>
+<script type="application/ld+json">
+<?php
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $origin = $scheme . '://' . ($_SERVER['HTTP_HOST'] ?? '');
+    $items = [];
+    $pos = 1;
+    foreach ($breadcrumbs as $crumb) {
+        $item = ['@type' => 'ListItem', 'position' => $pos, 'name' => $crumb['label']];
+        if (!empty($crumb['url'])) {
+            $u = $crumb['url'];
+            if (str_starts_with($u, '/')) {
+                $u = $origin . $u;
+            }
+            $item['item'] = $u;
+        }
+        $items[] = $item;
+        $pos++;
+    }
+    echo json_encode(['@context' => 'https://schema.org', '@type' => 'BreadcrumbList', 'itemListElement' => $items], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+?>
+</script>
+<?php endif; ?>
 <link rel="stylesheet" href="<?= asset('css/style.css') ?>">
 <?php if ($adsId !== ''): ?>
 <!-- Google tag (gtag.js) -->
@@ -31,6 +54,7 @@ $adsId = (string) config('ga_ads_id', '');
 <body>
 <?php include BASE_PATH . '/app/views/layout/header.php'; ?>
 <main class="container">
+  <?php include BASE_PATH . '/app/views/partials/breadcrumbs.php'; ?>
   <?php if ($msg = flash('success')): ?>
     <div class="flash flash--success"><?= e($msg) ?></div>
   <?php endif; ?>

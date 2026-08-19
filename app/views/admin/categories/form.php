@@ -20,8 +20,8 @@
       <label>Categoría padre</label>
       <select name="parent_id" class="form-control">
         <option value="">— Ninguna —</option>
-        <?php foreach ($parents as $p): if ($category && (int) $p['id'] === (int) $category['id']) { continue; } ?>
-          <option value="<?= (int) $p['id'] ?>" <?= ($category && (int) ($category['parent_id'] ?? 0) === (int) $p['id']) ? 'selected' : '' ?>><?= e($p['name']) ?></option>
+        <?php foreach ($parents as $p): if (in_array((int) $p['id'], $excludeIds, true)) { continue; } ?>
+          <option value="<?= (int) $p['id'] ?>" <?= ($category && (int) ($category['parent_id'] ?? 0) === (int) $p['id']) ? 'selected' : '' ?>><?= str_repeat('— ', (int) ($p['depth'] ?? 0)) . e($p['name']) ?></option>
         <?php endforeach; ?>
       </select>
     </div>

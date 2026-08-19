@@ -33,7 +33,7 @@ class ProductController extends Controller
             'pageTitle' => 'Nuevo producto',
             'product' => null,
             'images' => [],
-            'categories' => Category::all('sort_order ASC, name ASC'),
+            'categories' => Category::flatten(Category::treeWithCounts()),
         ], 'admin');
     }
 
@@ -64,7 +64,7 @@ class ProductController extends Controller
             'pageTitle' => 'Editar producto',
             'product' => $product,
             'images' => ProductImage::forProduct($id),
-            'categories' => Category::all('sort_order ASC, name ASC'),
+            'categories' => Category::flatten(Category::treeWithCounts()),
         ], 'admin');
     }
 

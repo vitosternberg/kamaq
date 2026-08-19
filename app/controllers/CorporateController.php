@@ -11,6 +11,10 @@ class CorporateController extends Controller
         $this->view('corporate/index', [
             'pageTitle' => 'Regalos Corporativos — KAMAQ',
             'metaDescription' => 'Regalos corporativos personalizados para tu empresa: cofres, cajas de vino y detalles de fin de año.',
+            'breadcrumbs' => [
+                ['label' => 'Inicio', 'url' => url('')],
+                ['label' => 'Corporativo', 'url' => null],
+            ],
         ]);
     }
 }

@@ -18,14 +18,20 @@ class Product extends Model
         return static::db()->query($sql)->fetchAll();
     }
 
-    public static function byCategory(int $categoryId): array
+    // Productos activos en una o varias categorías (por ejemplo, una categoría y sus hijas).
+    public static function byCategories(array $ids): array
     {
+        $ids = array_values(array_filter(array_map('intval', $ids)));
+        if (!$ids) {
+            return [];
+        }
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
         $stmt = static::db()->prepare(
             'SELECT p.*, ' . self::COVER_SELECT . ' FROM products p
-             WHERE p.category_id = ? AND p.is_active = 1
+             WHERE p.category_id IN (' . $placeholders . ') AND p.is_active = 1
              ORDER BY p.created_at DESC'
         );
-        $stmt->execute([$categoryId]);
+        $stmt->execute($ids);
         return $stmt->fetchAll();
     }
 

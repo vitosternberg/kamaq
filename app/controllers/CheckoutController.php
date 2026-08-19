@@ -21,6 +21,11 @@ class CheckoutController extends Controller
             'items' => $items,
             'subtotal' => Cart::subtotal(),
             'shipping' => (float) (Setting::get('shipping_default', '0') ?? 0),
+            'breadcrumbs' => [
+                ['label' => 'Inicio', 'url' => url('')],
+                ['label' => 'Carrito', 'url' => url('carrito')],
+                ['label' => 'Finalizar compra', 'url' => null],
+            ],
         ]);
     }
 
@@ -83,6 +88,14 @@ class CheckoutController extends Controller
 
     public function thanks(): void
     {
-        $this->view('checkout/thanks', ['pageTitle' => 'Gracias por tu pedido — KAMAQ']);
+        $this->view('checkout/thanks', [
+            'pageTitle' => 'Gracias por tu pedido — KAMAQ',
+            'breadcrumbs' => [
+                ['label' => 'Inicio', 'url' => url('')],
+                ['label' => 'Carrito', 'url' => url('carrito')],
+                ['label' => 'Finalizar compra', 'url' => url('checkout')],
+                ['label' => 'Gracias', 'url' => null],
+            ],
+        ]);
     }
 }

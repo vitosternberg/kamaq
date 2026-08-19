@@ -26,7 +26,7 @@
       <select name="category_id" class="form-control">
         <option value="">— Sin categoría —</option>
         <?php foreach ($categories as $c): ?>
-          <option value="<?= (int) $c['id'] ?>" <?= ($product && (int) ($product['category_id'] ?? 0) === (int) $c['id']) ? 'selected' : '' ?>><?= e($c['name']) ?></option>
+          <option value="<?= (int) $c['id'] ?>" <?= ($product && (int) ($product['category_id'] ?? 0) === (int) $c['id']) ? 'selected' : '' ?>><?= str_repeat('— ', (int) ($c['depth'] ?? 0)) . e($c['name']) ?></option>
         <?php endforeach; ?>
       </select>
     </div>

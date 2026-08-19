@@ -13,7 +13,7 @@ class CategoryController extends Controller
         Auth::requireLogin();
         $this->view('admin/categories/index', [
             'pageTitle' => 'Categorías',
-            'categories' => Category::withCounts(),
+            'categories' => Category::flatten(Category::treeWithCounts()),
         ], 'admin');
     }
 
@@ -23,7 +23,8 @@ class CategoryController extends Controller
         $this->view('admin/categories/form', [
             'pageTitle' => 'Nueva categoría',
             'category' => null,
-            'parents' => Category::all('sort_order ASC, name ASC'),
+            'parents' => Category::flatten(Category::treeWithCounts()),
+            'excludeIds' => [],
         ], 'admin');
     }
 
@@ -52,7 +53,8 @@ class CategoryController extends Controller
         $this->view('admin/categories/form', [
             'pageTitle' => 'Editar categoría',
             'category' => $category,
-            'parents' => Category::all('sort_order ASC, name ASC'),
+            'parents' => Category::flatten(Category::treeWithCounts()),
+            'excludeIds' => Category::descendantIds($id),
         ], 'admin');
     }
 
@@ -64,6 +66,10 @@ class CategoryController extends Controller
             redirect('/admin/categorias');
         }
         $data = $this->dataFromRequest();
+        if ($data['parent_id'] && in_array((int) $data['parent_id'], Category::descendantIds($id), true)) {
+            flash('error', 'No puedes asignar esta categoría como hija de sí misma ni de una de sus subcategorías.');
+            redirect('/admin/categorias/editar/' . $id);
+        }
         $data['slug'] = $this->uniqueSlug($data['slug'], $id);
         Category::update($id, $data);
         flash('success', 'Categoría actualizada.');
