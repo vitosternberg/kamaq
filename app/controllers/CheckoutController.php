@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Core\Cart;
 use App\Core\Controller;
+use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
@@ -56,6 +57,7 @@ class CheckoutController extends Controller
         $shipping = $method ? (float) $method['price'] : 0.0;
         $total = $subtotal + $shipping;
         $orderNumber = 'KQ-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(4)));
+        $isNewCustomer = Customer::findByEmail($email) === null;
 
         $orderId = Order::create([
             'order_number' => $orderNumber,
@@ -89,13 +91,22 @@ class CheckoutController extends Controller
 
         Cart::clear();
         flash('success', 'Pedido ' . $orderNumber . ' registrado. Te contactaremos para coordinar el pago.');
+        $_SESSION['last_order'] = [
+            'order_number' => $orderNumber,
+            'total' => $total,
+            'new_customer' => $isNewCustomer,
+        ];
         redirect('checkout/gracias');
     }
 
     public function thanks(): void
     {
+        $order = $_SESSION['last_order'] ?? null;
+        unset($_SESSION['last_order']);
         $this->view('checkout/thanks', [
             'pageTitle' => 'Gracias por tu pedido — KAMAQ',
+            'order' => $order,
+            'adsConversionId' => (string) config('ga_ads_conversion_id', ''),
             'breadcrumbs' => [
                 ['label' => 'Inicio', 'url' => url('')],
                 ['label' => 'Carrito', 'url' => url('carrito')],

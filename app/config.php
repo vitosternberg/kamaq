@@ -19,6 +19,7 @@ $config = [
     'currency_decimals' => 0,
     'contact_email' => 'contacto@kamaq.cl',
     'ga_ads_id' => 'AW-18397361572', // Google Ads (gtag.js)
+    'ga_ads_conversion_id' => 'AW-18397361572/sU7OCKPp7-McEKTrxcRE', // Conversión: Compra
 ];
 
 $localFile = __DIR__ . '/config.local.php';
