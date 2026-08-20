@@ -1,6 +1,7 @@
 <?php
 date_default_timezone_set('America/Santiago');
 $siteName = (string) config('app_name', 'KAMAQ');
+$adsId = (string) config('ga_ads_id', '');
 $launchAt = (string) config('launch_at', '');
 $targetTs = $launchAt !== '' ? strtotime($launchAt) : time() + 86400;
 ?>
@@ -11,6 +12,15 @@ $targetTs = $launchAt !== '' ? strtotime($launchAt) : time() + 86400;
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title><?= e($siteName) ?> — Próximamente</title>
+<?php if ($adsId !== ''): ?>
+<script async src="https://www.googletagmanager.com/gtag/js?id=<?= e($adsId) ?>"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '<?= e($adsId) ?>');
+</script>
+<?php endif; ?>
 <style>
   :root { --brand: #8a5a2b; --accent: #c9a15a; --text: #2b2b2b; --muted: #6b6b6b; }
   * { box-sizing: border-box; }
