@@ -6,6 +6,8 @@
 $config = [
     'app_name' => 'KAMAQ',
     'app_url' => '',               // '' si el sitio está en la raíz del dominio
+    'maintenance_mode' => true,    // true = sitio en mantención (solo /admin queda accesible)
+    'launch_at' => '2026-08-21 00:00:00', // fecha/hora del reloj de lanzamiento
     'db_host' => 'localhost',
     'db_port' => '3306',
     'db_name' => 'kamaq',

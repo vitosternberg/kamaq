@@ -103,4 +103,12 @@ $router->post('admin/inventario/umbral', 'App\Controllers\Admin\InventoryControl
 $router->post('admin/inventario/precios', 'App\Controllers\Admin\InventoryController@bulkPrice');
 $router->post('admin/inventario/stock', 'App\Controllers\Admin\InventoryController@bulkStock');
 
+// Modo mantención: muestra "próximamente" en todas las rutas públicas (admin sigue accesible).
+$maintenancePath = trim((string) parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH), '/');
+if (config('maintenance_mode', false) && !str_starts_with($maintenancePath, 'admin')) {
+    http_response_code(503);
+    include BASE_PATH . '/app/views/maintenance.php';
+    exit;
+}
+
 $router->dispatch($_SERVER['REQUEST_METHOD'] ?? 'GET', $_SERVER['REQUEST_URI'] ?? '/');
