@@ -23,6 +23,7 @@ class DashboardController extends Controller
                 'customers' => Customer::count(),
             ],
             'recentOrders' => Order::recent(5),
+            'heroProducts' => Product::featured(50),
         ], 'admin');
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
-use App\Models\Category;
 use App\Models\Product;
 
 class HomeController extends Controller
@@ -14,7 +13,6 @@ class HomeController extends Controller
             'pageTitle' => 'KAMAQ — Regalos corporativos y mementos personalizados',
             'metaDescription' => 'Tienda de regalos corporativos personalizados, mementos para bautizos, baby shower, matrimonios, cumpleaños, cajas de vino y joyeros.',
             'featured' => Product::featured(8),
-            'categories' => Category::roots(),
         ]);
     }
 }

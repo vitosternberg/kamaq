@@ -31,6 +31,13 @@ body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ari
 .stat .num { font-size: 28px; font-weight: 800; color: var(--brand); }
 .stat .label { color: var(--muted); font-size: 14px; }
 
+.hero-manage { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-bottom: 14px; }
+.hero-manage__item { display: flex; align-items: center; gap: 10px; border: 1px solid var(--border); border-radius: 8px; padding: 10px; background: #fff; }
+.hero-manage__item img { width: 44px; height: 44px; object-fit: cover; border-radius: 6px; flex: 0 0 auto; }
+.hero-manage__info { flex: 1; min-width: 0; }
+.hero-manage__name { display: block; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hero-manage__info a { font-size: 12px; color: var(--brand); }
+
 table.data { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 10px; overflow: hidden; }
 table.data th, table.data td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); }
 table.data th { background: #f6f1e8; font-size: 14px; }

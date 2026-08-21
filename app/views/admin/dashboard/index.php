@@ -7,6 +7,30 @@
   <div class="stat"><div class="num"><?= (int) $stats['customers'] ?></div><div class="label">Clientes</div></div>
 </div>
 
+<h2>Hero de inicio (Destacados)</h2>
+<div class="card">
+  <?php if (!empty($heroProducts)): ?>
+    <div class="hero-manage">
+      <?php foreach ($heroProducts as $hp): ?>
+        <div class="hero-manage__item">
+          <img src="<?= e(!empty($hp['cover']) ? upload('products/' . $hp['cover']) : asset('img/placeholder.svg')) ?>" alt="">
+          <div class="hero-manage__info">
+            <span class="hero-manage__name"><?= e($hp['name']) ?></span>
+            <a href="<?= url('admin/productos/editar/' . (int) $hp['id']) ?>">Editar</a>
+          </div>
+          <form method="post" action="<?= url('admin/productos/destacado/' . (int) $hp['id']) ?>">
+            <?= csrf_field() ?>
+            <button class="btn btn--outline btn--sm" type="submit">Quitar</button>
+          </form>
+        </div>
+      <?php endforeach; ?>
+    </div>
+    <p class="form-hint">Estos productos se muestran en el carrusel del inicio. Agrega o quita destacados desde <a href="<?= url('admin/productos') ?>">Productos</a>.</p>
+  <?php else: ?>
+    <p>No hay productos en el hero. Activa "Destacado" en <a href="<?= url('admin/productos') ?>">Productos</a> para que aparezcan aquí.</p>
+  <?php endif; ?>
+</div>
+
 <h2>Últimos pedidos</h2>
 <div class="card">
   <?php if (!empty($recentOrders)): ?>
