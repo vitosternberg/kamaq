@@ -26,6 +26,30 @@ class Category extends Model
         return $stmt->fetchAll();
     }
 
+    // Árbol completo de categorías activas (raíces con hijas anidadas), para el menú.
+    public static function menuTree(): array
+    {
+        $all = static::db()->query(
+            'SELECT * FROM categories WHERE is_active = 1 ORDER BY sort_order ASC, name ASC'
+        )->fetchAll();
+
+        $byParent = [];
+        foreach ($all as $row) {
+            $byParent[(int) ($row['parent_id'] ?? 0)][] = $row;
+        }
+
+        $build = function (int $parentId) use (&$build, $byParent): array {
+            $nodes = [];
+            foreach ($byParent[$parentId] ?? [] as $row) {
+                $row['children'] = $build((int) $row['id']);
+                $nodes[] = $row;
+            }
+            return $nodes;
+        };
+
+        return $build(0);
+    }
+
     public static function findBySlug(string $slug): ?array
     {
         $stmt = static::db()->prepare('SELECT * FROM categories WHERE slug = ? LIMIT 1');

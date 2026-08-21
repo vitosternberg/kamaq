@@ -1,4 +1,25 @@
-<?php $cartCount = \App\Core\Cart::count(); $customer = \App\Core\CustomerAuth::user(); ?>
+<?php
+$cartCount = \App\Core\Cart::count();
+$customer = \App\Core\CustomerAuth::user();
+$menuTree = \App\Models\Category::menuTree();
+
+$renderMenu = function (array $nodes) use (&$renderMenu): void {
+    if (!$nodes) {
+        return;
+    }
+    echo '<ul>';
+    foreach ($nodes as $node) {
+        $hasChildren = !empty($node['children']);
+        echo '<li' . ($hasChildren ? ' class="has-children"' : '') . '>';
+        echo '<a href="' . url('categoria/' . e($node['slug'])) . '">' . e($node['name']) . '</a>';
+        if ($hasChildren) {
+            $renderMenu($node['children']);
+        }
+        echo '</li>';
+    }
+    echo '</ul>';
+};
+?>
 <header class="site-header">
   <div class="container">
     <div class="header-main">
@@ -22,6 +43,12 @@
     </div>
     <nav class="header-nav">
       <a href="<?= url('') ?>">Inicio</a>
+      <div class="nav-item nav-item--services">
+        <button type="button" class="nav-item__toggle">Servicios <span class="caret">▾</span></button>
+        <div class="nav-dropdown">
+          <?php $renderMenu($menuTree); ?>
+        </div>
+      </div>
       <a href="<?= url('catalogo') ?>">Catálogo</a>
       <a href="<?= url('corporativo') ?>">Corporativo</a>
       <a href="<?= url('proyectos') ?>">Proyectos</a>
