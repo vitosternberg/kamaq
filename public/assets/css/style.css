@@ -59,11 +59,17 @@ img { max-width: 100%; display: block; }
   align-items: center;
   flex: 1;
   max-width: 680px;
-  height: 46px;
-  border: 2px solid var(--brand);
+  height: 44px;
+  border: 1px solid var(--border);
   border-radius: 8px;
-  background: #fff;
+  background: #f6f4ef;
   overflow: hidden;
+  transition: border-color .15s, box-shadow .15s, background .15s;
+}
+.header-search:focus-within {
+  border-color: var(--brand);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(138, 90, 43, .12);
 }
 .header-search input {
   flex: 1;

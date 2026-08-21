@@ -25,7 +25,12 @@ function url(string $path = ''): string
 
 function asset(string $path): string
 {
-    return url('assets/' . ltrim($path, '/'));
+    $url = url('assets/' . ltrim($path, '/'));
+    $file = BASE_PATH . '/public/assets/' . ltrim($path, '/');
+    if (is_file($file)) {
+        $url .= '?v=' . filemtime($file);
+    }
+    return $url;
 }
 
 function upload(string $filename): string
