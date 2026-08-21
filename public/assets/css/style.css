@@ -290,6 +290,27 @@ main { padding: 28px 0 56px; }
 .bestsellers__head .section-title { margin-bottom: 4px; }
 .bestsellers__sub { margin: 0 0 20px; color: var(--muted); font-size: 14px; }
 
+/* Banner promocional */
+.home-banner {
+  margin-top: 40px;
+  padding: 40px 28px;
+  border-radius: var(--radius);
+  text-align: center;
+  background: linear-gradient(135deg, var(--brand) 0%, #a06a32 55%, var(--accent) 130%);
+  color: #fff;
+}
+.home-banner__content { max-width: 640px; margin: 0 auto; }
+.home-banner__tag {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.home-banner__title { margin: 0 0 10px; font-size: 28px; line-height: 1.2; }
+.home-banner__text { margin: 0 0 20px; color: rgba(255,255,255,.92); font-size: 16px; }
+
 /* Búsqueda */
 .search-summary { color: var(--muted); margin: 0 0 20px; }
 .search-empty { color: var(--muted); margin: 0 0 32px; }
@@ -366,6 +387,8 @@ main { padding: 28px 0 56px; }
 .btn--primary:hover { background: var(--brand-dark); color: #fff; }
 .btn--outline { background: transparent; border-color: var(--brand); color: var(--brand); }
 .btn--outline:hover { background: var(--brand); color: #fff; }
+.btn--light { background: #fff; color: var(--brand); }
+.btn--light:hover { background: #f3ede3; color: var(--brand-dark); }
 
 /* Producto individual */
 .product-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; }

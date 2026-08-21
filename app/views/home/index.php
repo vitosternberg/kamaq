@@ -39,6 +39,15 @@
 </section>
 <?php endif; ?>
 
+<section class="home-banner">
+  <div class="home-banner__content">
+    <p class="home-banner__tag">Hecho a tu medida</p>
+    <h2 class="home-banner__title">¿Tienes una idea para tu regalo?</h2>
+    <p class="home-banner__text">Tráenos tu diseño o referencias de Pinterest e Instagram y lo creamos contigo.</p>
+    <a class="btn btn--light" href="<?= url('proyectos') ?>">Ver proyectos</a>
+  </div>
+</section>
+
 <?php if (!empty($bestsellers)): ?>
 <section class="bestsellers">
   <div class="bestsellers__head">
