@@ -39,10 +39,18 @@
       <textarea name="description" class="form-control"><?= e($product['description'] ?? '') ?></textarea>
     </div>
 
-    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;">
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:14px;">
       <div class="form-group">
-        <label>Precio</label>
-        <input type="number" step="0.01" name="price" class="form-control" value="<?= e($product['price'] ?? '0') ?>" required>
+        <label>Costo neto unitario</label>
+        <input type="number" step="0.01" name="cost" id="cost" class="form-control" value="<?= e($product['cost'] ?? '') ?>">
+      </div>
+      <div class="form-group">
+        <label>% ganancia</label>
+        <input type="number" step="0.01" name="margin_percent" id="margin_percent" class="form-control" value="<?= e($product['margin_percent'] ?? '') ?>">
+      </div>
+      <div class="form-group">
+        <label>Precio neto (sin IVA)</label>
+        <input type="number" step="0.01" name="price" id="price" class="form-control" value="<?= e($product['price'] ?? '0') ?>" required>
       </div>
       <div class="form-group">
         <label>Precio oferta (opcional)</label>
@@ -52,7 +60,17 @@
         <label>Stock</label>
         <input type="number" name="stock" class="form-control" value="<?= (int) ($product['stock'] ?? 0) ?>">
       </div>
+      <div class="form-group">
+        <label>Impuesto</label>
+        <select name="tax_id" class="form-control">
+          <option value="">— Por defecto —</option>
+          <?php foreach ($taxes as $t): ?>
+            <option value="<?= (int) $t['id'] ?>" <?= ((int) ($product['tax_id'] ?? 0) === (int) $t['id']) ? 'selected' : '' ?>><?= e($t['name']) ?> (<?= e($t['rate']) ?>%)</option>
+          <?php endforeach; ?>
+        </select>
+      </div>
     </div>
+    <p class="form-hint" style="margin-top:4px;">Al ingresar costo y % ganancia, el precio neto se calcula automáticamente: costo × (1 + %/100).</p>
 
     <div class="form-check">
       <input type="checkbox" name="is_featured" id="is_featured" <?= (!empty($product['is_featured'])) ? 'checked' : '' ?>>
@@ -101,3 +119,23 @@
     <button class="btn btn--primary" type="submit" style="margin-top:16px;">Guardar</button>
   </form>
 </div>
+
+<script>
+(function () {
+  var costEl = document.getElementById('cost');
+  var marginEl = document.getElementById('margin_percent');
+  var priceEl = document.getElementById('price');
+  if (!costEl || !marginEl || !priceEl) { return; }
+
+  function recalc() {
+    var cost = parseFloat(costEl.value);
+    var margin = parseFloat(marginEl.value);
+    if (!isNaN(cost) && cost > 0 && !isNaN(margin) && margin >= 0) {
+      var price = cost * (1 + margin / 100);
+      priceEl.value = Math.round(price);
+    }
+  }
+  costEl.addEventListener('input', recalc);
+  marginEl.addEventListener('input', recalc);
+})();
+</script>

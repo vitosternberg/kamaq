@@ -4,6 +4,9 @@ $hasSale = !empty($product['sale_price']) && (float) $product['sale_price'] > 0;
 if ($hasSale) {
     $price = (float) $product['sale_price'];
 }
+$taxId = ($product['tax_id'] ?? null) !== null ? (int) $product['tax_id'] : null;
+$price = gross_price($price, $taxId);
+$oldPrice = $hasSale ? gross_price((float) $product['price'], $taxId) : 0.0;
 $mainImage = !empty($images) ? $images[0]['filename'] : null;
 ?>
 <div class="product-detail">
@@ -27,7 +30,7 @@ $mainImage = !empty($images) ? $images[0]['filename'] : null;
     <h1><?= e($product['name']) ?></h1>
     <div class="product-detail__price">
       <?= money($price) ?>
-      <?php if ($hasSale): ?><span class="product-card__old" style="font-size:18px;"><?= money($product['price']) ?></span><?php endif; ?>
+      <?php if ($hasSale): ?><span class="product-card__old" style="font-size:18px;"><?= money($oldPrice) ?></span><?php endif; ?>
     </div>
     <?php if (!empty($product['short_description'])): ?>
       <p><?= e($product['short_description']) ?></p>

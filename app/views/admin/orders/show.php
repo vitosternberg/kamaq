@@ -28,7 +28,8 @@
       </tbody>
     </table>
     <p style="margin-top:12px;">
-      Subtotal: <?= money($order['subtotal']) ?><br>
+      Subtotal (neto): <?= money($order['subtotal']) ?><br>
+      Impuestos: <?= money($order['tax'] ?? 0) ?><br>
       Envío: <?= money($order['shipping']) ?><?= !empty($order['shipping_method']) ? ' (' . e($order['shipping_method']) . ')' : '' ?><br>
       <strong>Total: <?= money($order['total']) ?></strong>
     </p>

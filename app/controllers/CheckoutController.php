@@ -22,6 +22,7 @@ class CheckoutController extends Controller
 
         $customer = CustomerAuth::user();
         $subtotal = Cart::subtotal();
+        $tax = Cart::tax();
         $isRm = !empty($customer['is_rm']);
         $options = Shipping::options($isRm, $subtotal);
 
@@ -29,6 +30,7 @@ class CheckoutController extends Controller
             'pageTitle' => 'Finalizar compra — KAMAQ',
             'items' => $items,
             'subtotal' => $subtotal,
+            'tax' => $tax,
             'customer' => $customer,
             'shippingOptions' => $options,
             'shipping' => $options ? $options[0]['price'] : 0.0,
@@ -54,11 +56,12 @@ class CheckoutController extends Controller
         $customer = CustomerAuth::user();
 
         $subtotal = Cart::subtotal();
+        $tax = Cart::tax();
         $isRm = !empty($customer['is_rm']);
         $shipKey = (string) ($_POST['shipping_option'] ?? '');
         $shipping = Shipping::priceFor($shipKey, $isRm, $subtotal);
         $optionName = $this->optionName($shipKey, $isRm, $subtotal);
-        $total = $subtotal + $shipping;
+        $total = $subtotal + $tax + $shipping;
         $orderNumber = 'KQ-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(4)));
 
         $name = trim($_POST['name'] ?? '');
@@ -89,6 +92,7 @@ class CheckoutController extends Controller
             'region' => (string) ($customer['region'] ?? ''),
             'notes' => trim($_POST['notes'] ?? ''),
             'subtotal' => $subtotal,
+            'tax' => $tax,
             'shipping' => $shipping,
             'shipping_method' => $optionName,
             'total' => $total,
@@ -98,6 +102,7 @@ class CheckoutController extends Controller
         ]);
 
         foreach ($items as $item) {
+            $productCost = $item['product']['cost'] ?? null;
             OrderItem::create([
                 'order_id' => $orderId,
                 'product_id' => $item['product']['id'],
@@ -105,6 +110,8 @@ class CheckoutController extends Controller
                 'price' => $item['price'],
                 'quantity' => $item['quantity'],
                 'subtotal' => $item['subtotal'],
+                'cost' => ($productCost !== null && $productCost !== '') ? (float) $productCost : null,
+                'tax_rate' => tax_rate($item['tax_id']),
             ]);
             Product::decrementStock((int) $item['product']['id'], (int) $item['quantity']);
         }

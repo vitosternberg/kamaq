@@ -36,6 +36,9 @@ CREATE TABLE IF NOT EXISTS products (
   stock INT NOT NULL DEFAULT 0,
   is_featured TINYINT(1) NOT NULL DEFAULT 0,
   is_bestseller TINYINT(1) NOT NULL DEFAULT 0,
+  cost DECIMAL(12,2) NULL,
+  margin_percent DECIMAL(6,2) NULL,
+  tax_id INT UNSIGNED NULL,
   is_active TINYINT(1) NOT NULL DEFAULT 1,
   meta_title VARCHAR(160) NULL,
   meta_description VARCHAR(255) NULL,
@@ -104,6 +107,7 @@ CREATE TABLE IF NOT EXISTS orders (
   region VARCHAR(120) NULL,
   notes TEXT NULL,
   subtotal DECIMAL(12,2) NOT NULL DEFAULT 0,
+  tax DECIMAL(12,2) NOT NULL DEFAULT 0,
   shipping DECIMAL(12,2) NOT NULL DEFAULT 0,
   shipping_method VARCHAR(120) NULL,
   total DECIMAL(12,2) NOT NULL DEFAULT 0,
@@ -124,6 +128,8 @@ CREATE TABLE IF NOT EXISTS order_items (
   price DECIMAL(12,2) NOT NULL DEFAULT 0,
   quantity INT NOT NULL DEFAULT 1,
   subtotal DECIMAL(12,2) NOT NULL DEFAULT 0,
+  cost DECIMAL(12,2) NULL,
+  tax_rate DECIMAL(6,2) NULL,
   PRIMARY KEY (id),
   KEY idx_order_items_order (order_id),
   CONSTRAINT fk_order_items_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
@@ -133,6 +139,17 @@ CREATE TABLE IF NOT EXISTS shipping_methods (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   name VARCHAR(120) NOT NULL,
   price DECIMAL(12,2) NOT NULL DEFAULT 0,
+  is_active TINYINT(1) NOT NULL DEFAULT 1,
+  sort_order INT NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS taxes (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  name VARCHAR(80) NOT NULL,
+  rate DECIMAL(6,2) NOT NULL DEFAULT 0,
+  type VARCHAR(40) NOT NULL DEFAULT 'IVA',
   is_active TINYINT(1) NOT NULL DEFAULT 1,
   sort_order INT NOT NULL DEFAULT 0,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -168,3 +185,6 @@ INSERT IGNORE INTO shipping_methods (id, name, price, is_active, sort_order) VAL
   (2, 'Express', 4990, 1, 2),
   (3, 'Dentro de la RM', 3990, 1, 3),
   (4, 'Fuera de la RM', 6990, 1, 4);
+
+INSERT IGNORE INTO taxes (id, name, rate, type, is_active, sort_order) VALUES
+  (1, 'IVA', 19.00, 'IVA', 1, 1);

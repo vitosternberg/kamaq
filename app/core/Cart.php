@@ -38,11 +38,15 @@ class Cart
             if ($product) {
                 $product['cover'] = ProductImage::primary((int) $product['id']);
                 $price = self::priceOf($product);
+                $taxId = ($product['tax_id'] ?? null) !== null ? (int) $product['tax_id'] : null;
+                $subtotal = $price * (int) $qty;
                 $items[] = [
                     'product' => $product,
                     'quantity' => (int) $qty,
                     'price' => $price,
-                    'subtotal' => $price * (int) $qty,
+                    'subtotal' => $subtotal,
+                    'tax_id' => $taxId,
+                    'tax' => $subtotal * tax_rate($taxId) / 100,
                 ];
             }
         }
@@ -54,6 +58,16 @@ class Cart
         $sum = 0.0;
         foreach (self::items() as $item) {
             $sum += $item['subtotal'];
+        }
+        return $sum;
+    }
+
+    // Total de impuestos del carrito.
+    public static function tax(): float
+    {
+        $sum = 0.0;
+        foreach (self::items() as $item) {
+            $sum += $item['tax'];
         }
         return $sum;
     }

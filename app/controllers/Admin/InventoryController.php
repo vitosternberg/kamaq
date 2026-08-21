@@ -7,6 +7,7 @@ use App\Core\Controller;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Setting;
+use App\Models\Tax;
 
 class InventoryController extends Controller
 {
@@ -43,6 +44,7 @@ class InventoryController extends Controller
             'filter' => $filter,
             'counts' => $counts,
             'categories' => Category::all('sort_order ASC, name ASC'),
+            'taxes' => Tax::active(),
         ], 'admin');
     }
 
@@ -59,6 +61,9 @@ class InventoryController extends Controller
             'stock' => (int) ($_POST['stock'] ?? 0),
             'price' => (float) ($_POST['price'] ?? 0),
             'sale_price' => $salePrice !== '' ? (float) $salePrice : null,
+            'cost' => ($_POST['cost'] ?? '') !== '' ? (float) ($_POST['cost'] ?? 0) : null,
+            'margin_percent' => ($_POST['margin_percent'] ?? '') !== '' ? (float) ($_POST['margin_percent'] ?? 0) : null,
+            'tax_id' => ((int) ($_POST['tax_id'] ?? 0)) ?: null,
         ]);
         flash('success', 'Producto actualizado.');
         redirect('/admin/inventario');

@@ -58,10 +58,12 @@
       </div>
     <?php endforeach; ?>
     <hr>
-    <div style="display:flex; justify-content:space-between;"><span>Subtotal</span><span><?= money($subtotal) ?></span></div>
-    <div style="display:flex; justify-content:space-between;"><span>Envío</span><span id="shipping-total"><?= $shipping > 0 ? money($shipping) : 'Gratis' ?></span></div>
+    <div style="display:flex; justify-content:space-between;"><span>Subtotal (neto)</span><span><?= money($subtotal) ?></span></div>
+    <div style="display:flex; justify-content:space-between;"><span>Impuestos</span><span><?= money($tax) ?></span></div>
+    <div style="display:flex; justify-content:space-between; font-weight:700;"><span>Total (con IVA)</span><span><?= money($subtotal + $tax) ?></span></div>
+    <div style="display:flex; justify-content:space-between; margin-top:8px;"><span>Envío</span><span id="shipping-total"><?= $shipping > 0 ? money($shipping) : 'Gratis' ?></span></div>
     <hr>
-    <div style="display:flex; justify-content:space-between; font-weight:700; font-size:18px;"><span>Total</span><span id="order-total"><?= money($subtotal + $shipping) ?></span></div>
+    <div style="display:flex; justify-content:space-between; font-weight:700; font-size:18px;"><span>Total final</span><span id="order-total"><?= money($subtotal + $tax + $shipping) ?></span></div>
   </div>
 </div>
 
@@ -72,12 +74,13 @@
   var totalEl = document.getElementById('order-total');
   if (!radios.length || !shipEl || !totalEl) { return; }
   var subtotal = <?= (float) $subtotal ?>;
+  var tax = <?= (float) $tax ?>;
   function fmt(n) { return '$' + Math.round(n).toLocaleString('es-CL'); }
   function refresh() {
     var el = document.querySelector('input[name="shipping_option"]:checked');
     var price = el ? parseFloat(el.getAttribute('data-price')) : 0;
     shipEl.textContent = price > 0 ? fmt(price) : 'Gratis';
-    totalEl.textContent = fmt(subtotal + price);
+    totalEl.textContent = fmt(subtotal + tax + price);
   }
   for (var i = 0; i < radios.length; i++) { radios[i].addEventListener('change', refresh); }
 })();

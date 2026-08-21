@@ -3,11 +3,14 @@
   <div class="hero__viewport">
     <?php foreach ($featured as $i => $product): ?>
       <?php
+      $slideTaxId = ($product['tax_id'] ?? null) !== null ? (int) $product['tax_id'] : null;
       $slidePrice = (float) $product['price'];
       $slideHasSale = !empty($product['sale_price']) && (float) $product['sale_price'] > 0;
       if ($slideHasSale) {
           $slidePrice = (float) $product['sale_price'];
       }
+      $slidePrice = gross_price($slidePrice, $slideTaxId);
+      $slideOld = $slideHasSale ? gross_price((float) $product['price'], $slideTaxId) : 0.0;
       ?>
       <article class="hero-slide<?= $i === 0 ? ' is-active' : '' ?>" data-slide>
         <img class="hero-slide__bg" src="<?= e(!empty($product['cover']) ? upload('products/' . $product['cover']) : asset('img/placeholder.svg')) ?>" alt="<?= e($product['name']) ?>" loading="<?= $i === 0 ? 'eager' : 'lazy' ?>">
@@ -19,7 +22,7 @@
           <?php endif; ?>
           <p class="hero-slide__price">
             <?= money($slidePrice) ?>
-            <?php if ($slideHasSale): ?><span class="hero-slide__old"><?= money($product['price']) ?></span><?php endif; ?>
+            <?php if ($slideHasSale): ?><span class="hero-slide__old"><?= money($slideOld) ?></span><?php endif; ?>
           </p>
           <a class="btn btn--primary" href="<?= url('producto/' . e($product['slug'])) ?>">Ver producto</a>
         </div>

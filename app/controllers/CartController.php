@@ -15,6 +15,7 @@ class CartController extends Controller
             'pageTitle' => 'Carrito — KAMAQ',
             'items' => $items,
             'subtotal' => Cart::subtotal(),
+            'tax' => Cart::tax(),
             'breadcrumbs' => [
                 ['label' => 'Inicio', 'url' => url('')],
                 ['label' => 'Carrito', 'url' => null],

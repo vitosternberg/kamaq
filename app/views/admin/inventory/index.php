@@ -84,15 +84,31 @@ $statusMeta = [
 
 <div class="card">
   <table class="data">
-    <thead><tr><th>Producto</th><th>SKU</th><th>Stock</th><th>Precio</th><th>Oferta</th><th>Estado</th><th></th></tr></thead>
+    <thead><tr><th>Producto</th><th>SKU</th><th>Stock</th><th>Costo</th><th>% Margen</th><th>Precio neto</th><th>Precio bruto</th><th>Oferta</th><th>Impuesto</th><th>Estado</th><th></th></tr></thead>
     <tbody>
-    <?php foreach ($products as $p): $meta = $statusMeta[$p['stock_status']] ?? $statusMeta['ok']; ?>
+    <?php foreach ($products as $p):
+      $meta = $statusMeta[$p['stock_status']] ?? $statusMeta['ok'];
+      $pNet = (float) $p['price'];
+      $pTaxId = ($p['tax_id'] !== null && $p['tax_id'] !== '') ? (int) $p['tax_id'] : null;
+      $pGross = gross_price($pNet, $pTaxId);
+    ?>
       <tr>
         <td><?= e($p['name']) ?></td>
         <td><?= e($p['sku'] ?? '') ?></td>
         <td><input type="number" name="stock" form="f<?= (int) $p['id'] ?>" class="form-control" value="<?= (int) $p['stock'] ?>" style="max-width:80px;"></td>
+        <td><input type="number" step="0.01" name="cost" form="f<?= (int) $p['id'] ?>" class="form-control" value="<?= e($p['cost'] ?? '') ?>" style="max-width:100px;"></td>
+        <td><input type="number" step="0.01" name="margin_percent" form="f<?= (int) $p['id'] ?>" class="form-control" value="<?= e($p['margin_percent'] ?? '') ?>" style="max-width:90px;"></td>
         <td><input type="number" step="0.01" name="price" form="f<?= (int) $p['id'] ?>" class="form-control" value="<?= e($p['price']) ?>" style="max-width:110px;"></td>
+        <td><?= money($pGross) ?></td>
         <td><input type="number" step="0.01" name="sale_price" form="f<?= (int) $p['id'] ?>" class="form-control" value="<?= e($p['sale_price'] ?? '') ?>" style="max-width:110px;"></td>
+        <td>
+          <select name="tax_id" form="f<?= (int) $p['id'] ?>" class="form-control" style="max-width:140px;">
+            <option value="">— Def. —</option>
+            <?php foreach ($taxes as $t): ?>
+              <option value="<?= (int) $t['id'] ?>" <?= ($pTaxId === (int) $t['id']) ? 'selected' : '' ?>><?= e($t['name']) ?></option>
+            <?php endforeach; ?>
+          </select>
+        </td>
         <td><span class="badge badge--<?= e($meta[1]) ?>"><?= e($meta[0]) ?></span></td>
         <td><button class="btn btn--primary btn--sm" type="submit" form="f<?= (int) $p['id'] ?>">Guardar</button></td>
       </tr>

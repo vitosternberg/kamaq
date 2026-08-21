@@ -61,6 +61,18 @@ function money($amount): string
     return $symbol . number_format((float) $amount, $decimals, ',', '.');
 }
 
+// Tasa de impuesto (porcentaje) para un producto. Si taxId es null, usa el default.
+function tax_rate(?int $taxId): float
+{
+    return \App\Models\Tax::rate($taxId);
+}
+
+// Precio bruto (con impuesto) a partir de un precio neto.
+function gross_price(float $net, ?int $taxId): float
+{
+    return $net * (1 + tax_rate($taxId) / 100);
+}
+
 function slugify(string $text): string
 {
     $text = function_exists('mb_strtolower')

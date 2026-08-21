@@ -113,6 +113,10 @@ $router->get('admin/clientes', 'App\Controllers\Admin\CustomerController@index')
 $router->get('admin/clientes/{email}', 'App\Controllers\Admin\CustomerController@show');
 $router->get('admin/envios', 'App\Controllers\Admin\ShippingController@index');
 $router->post('admin/envios/politica', 'App\Controllers\Admin\ShippingController@savePolicy');
+$router->get('admin/impuestos', 'App\Controllers\Admin\TaxController@index');
+$router->post('admin/impuestos/guardar', 'App\Controllers\Admin\TaxController@store');
+$router->post('admin/impuestos/actualizar/{id}', 'App\Controllers\Admin\TaxController@update');
+$router->post('admin/impuestos/eliminar/{id}', 'App\Controllers\Admin\TaxController@delete');
 $router->get('admin/inventario', 'App\Controllers\Admin\InventoryController@index');
 $router->post('admin/inventario/actualizar', 'App\Controllers\Admin\InventoryController@updateProduct');
 $router->post('admin/inventario/umbral', 'App\Controllers\Admin\InventoryController@saveThreshold');

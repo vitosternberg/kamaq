@@ -7,6 +7,7 @@ use App\Core\Controller;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\Tax;
 
 class ProductController extends Controller
 {
@@ -34,6 +35,7 @@ class ProductController extends Controller
             'product' => null,
             'images' => [],
             'categories' => Category::flatten(Category::treeWithCounts()),
+            'taxes' => Tax::active(),
         ], 'admin');
     }
 
@@ -65,6 +67,7 @@ class ProductController extends Controller
             'product' => $product,
             'images' => ProductImage::forProduct($id),
             'categories' => Category::flatten(Category::treeWithCounts()),
+            'taxes' => Tax::active(),
         ], 'admin');
     }
 
@@ -159,6 +162,9 @@ class ProductController extends Controller
             'price' => (float) ($_POST['price'] ?? 0),
             'sale_price' => $salePrice !== '' ? (float) $salePrice : null,
             'stock' => (int) ($_POST['stock'] ?? 0),
+            'cost' => ($_POST['cost'] ?? '') !== '' ? (float) ($_POST['cost'] ?? 0) : null,
+            'margin_percent' => ($_POST['margin_percent'] ?? '') !== '' ? (float) ($_POST['margin_percent'] ?? 0) : null,
+            'tax_id' => ((int) ($_POST['tax_id'] ?? 0)) ?: null,
             'is_featured' => isset($_POST['is_featured']) ? 1 : 0,
             'is_bestseller' => isset($_POST['is_bestseller']) ? 1 : 0,
             'is_active' => isset($_POST['is_active']) ? 1 : 0,
