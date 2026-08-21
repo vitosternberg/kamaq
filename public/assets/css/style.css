@@ -175,28 +175,6 @@ img { max-width: 100%; display: block; }
   white-space: nowrap;
 }
 .nav-dropdown a:hover { background: var(--bg); color: var(--brand); }
-.nav-dropdown li.has-children > a::after { content: "›"; margin-left: 12px; color: var(--muted); }
-.nav-dropdown li.has-children > ul {
-  position: absolute;
-  top: 0;
-  left: 100%;
-  min-width: 220px;
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  box-shadow: 0 12px 28px rgba(0,0,0,.12);
-  padding: 8px 0;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateX(6px);
-  transition: opacity .18s ease, transform .18s ease, visibility .18s;
-}
-.nav-dropdown li.has-children:hover > ul,
-.nav-dropdown li.has-children:focus-within > ul {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(0);
-}
 
 main { padding: 28px 0 56px; }
 

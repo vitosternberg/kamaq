@@ -1,24 +1,7 @@
 <?php
 $cartCount = \App\Core\Cart::count();
 $customer = \App\Core\CustomerAuth::user();
-$menuTree = \App\Models\Category::menuTree();
-
-$renderMenu = function (array $nodes) use (&$renderMenu): void {
-    if (!$nodes) {
-        return;
-    }
-    echo '<ul>';
-    foreach ($nodes as $node) {
-        $hasChildren = !empty($node['children']);
-        echo '<li' . ($hasChildren ? ' class="has-children"' : '') . '>';
-        echo '<a href="' . url('categoria/' . e($node['slug'])) . '">' . e($node['name']) . '</a>';
-        if ($hasChildren) {
-            $renderMenu($node['children']);
-        }
-        echo '</li>';
-    }
-    echo '</ul>';
-};
+$serviceCategories = \App\Models\Category::roots();
 ?>
 <header class="site-header">
   <div class="container">
@@ -46,7 +29,11 @@ $renderMenu = function (array $nodes) use (&$renderMenu): void {
       <div class="nav-item nav-item--services">
         <button type="button" class="nav-item__toggle">Servicios <span class="caret">▾</span></button>
         <div class="nav-dropdown">
-          <?php $renderMenu($menuTree); ?>
+          <ul>
+            <?php foreach ($serviceCategories as $cat): ?>
+              <li><a href="<?= url('categoria/' . e($cat['slug'])) ?>"><?= e($cat['name']) ?></a></li>
+            <?php endforeach; ?>
+          </ul>
         </div>
       </div>
       <a href="<?= url('catalogo') ?>">Catálogo</a>
