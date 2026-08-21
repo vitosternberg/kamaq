@@ -290,6 +290,59 @@ main { padding: 28px 0 56px; }
 .bestsellers__head .section-title { margin-bottom: 4px; }
 .bestsellers__sub { margin: 0 0 20px; color: var(--muted); font-size: 14px; }
 
+/* Hero de página (banner con imagen de fondo) */
+.page-hero {
+  position: relative;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 56px 20px;
+  border-radius: var(--radius) var(--radius) 0 0;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+}
+.page-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(30, 22, 14, .55);
+}
+.page-hero__content {
+  position: relative;
+  z-index: 1;
+  max-width: 760px;
+}
+.page-hero__content h1 {
+  margin: 0 0 12px;
+  font-size: 40px;
+  line-height: 1.12;
+  font-weight: 800;
+  color: #fff;
+}
+.page-hero__content h2 {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.35;
+  font-weight: 500;
+  color: rgba(255,255,255,.92);
+}
+.page-content {
+  margin-top: 0;
+  border: 1px solid var(--border);
+  border-top: 0;
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 24px;
+  background: #fff;
+  font-size: 16px;
+  line-height: 1.6;
+}
+@media (max-width: 768px) {
+  .page-hero__content h1 { font-size: 28px; }
+  .page-hero__content h2 { font-size: 17px; }
+}
+
 /* Banner promocional */
 .home-banner {
   margin-top: 40px;

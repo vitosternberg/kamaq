@@ -71,6 +71,7 @@ $router->get('contacto', 'App\Controllers\ContactController@index');
 $router->post('contacto', 'App\Controllers\ContactController@store');
 $router->get('corporativo', 'App\Controllers\CorporateController@index');
 $router->get('proyectos', 'App\Controllers\PageController@projects');
+$router->post('proyectos', 'App\Controllers\PageController@projectsStore');
 $router->get('politica-envio', 'App\Controllers\PageController@shipping');
 $router->get('proteccion-datos', 'App\Controllers\PageController@privacy');
 $router->get('como-comprar', 'App\Controllers\PageController@howToBuy');
