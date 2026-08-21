@@ -73,7 +73,7 @@ class CustomerAuthController extends Controller
             'verify_token' => $verifyToken,
         ]);
 
-        $link = url('cuenta/verificar/' . $verifyToken);
+        $link = absolute_url('cuenta/verificar/' . $verifyToken);
         send_mail(
             $email,
             'Verifica tu cuenta en KAMAQ',
@@ -171,7 +171,7 @@ class CustomerAuthController extends Controller
                 'reset_token' => $token,
                 'reset_token_expires' => date('Y-m-d H:i:s', time() + 86400),
             ]);
-            $link = url('cuenta/recuperar/' . $token);
+            $link = absolute_url('cuenta/recuperar/' . $token);
             send_mail(
                 $email,
                 'Recupera tu contraseña en KAMAQ',

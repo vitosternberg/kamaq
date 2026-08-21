@@ -23,6 +23,22 @@ function url(string $path = ''): string
     return $base . '/' . $path;
 }
 
+// URL absoluta (con dominio), para enlaces en correos y notificaciones.
+function absolute_url(string $path = ''): string
+{
+    $base = rtrim((string) config('app_url', ''), '/');
+    if ($base !== '') {
+        return $base . '/' . ltrim($path, '/');
+    }
+
+    $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
+    $scheme = $https ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? '';
+
+    return $scheme . '://' . $host . '/' . ltrim($path, '/');
+}
+
 function asset(string $path): string
 {
     $url = url('assets/' . ltrim($path, '/'));
