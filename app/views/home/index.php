@@ -10,7 +10,8 @@
       }
       ?>
       <article class="hero-slide<?= $i === 0 ? ' is-active' : '' ?>" data-slide>
-        <img class="hero-slide__bg" src="<?= e(!empty($product['cover']) ? upload('products/' . $product['cover']) : asset('img/placeholder.svg')) ?>" alt="<?= e($product['name']) ?>" loading="<?= $i === 0 ? 'eager' : 'lazy' ?>">
+        <img class="hero-slide__bg" src="<?= e(!empty($product['cover']) ? upload('products/' . $product['cover']) : asset('img/placeholder.svg')) ?>" alt="" aria-hidden="true" loading="<?= $i === 0 ? 'eager' : 'lazy' ?>">
+        <img class="hero-slide__img" src="<?= e(!empty($product['cover']) ? upload('products/' . $product['cover']) : asset('img/placeholder.svg')) ?>" alt="<?= e($product['name']) ?>" loading="<?= $i === 0 ? 'eager' : 'lazy' ?>">
         <div class="hero-slide__content">
           <p class="hero-slide__tag">Destacado</p>
           <h2><?= e($product['name']) ?></h2>
