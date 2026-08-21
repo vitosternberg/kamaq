@@ -53,7 +53,7 @@
     <div class="form-group">
       <label>Archivos adjuntos (imágenes o referencias)</label>
       <input type="file" name="attachments[]" multiple accept="image/jpeg,image/png,image/webp,application/pdf">
-      <div class="form-hint">Puedes subir una o más imágenes o un PDF (máx. 10 MB por archivo).</div>
+      <div class="form-hint">Puedes subir una o más imágenes o un PDF (máx. 2 MB por archivo).</div>
     </div>
 
     <button class="btn btn--primary" type="submit">Enviar proyecto</button>

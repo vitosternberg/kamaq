@@ -113,7 +113,7 @@ class PageController extends Controller
 
         $saved = [];
         $allowed = ['jpg', 'jpeg', 'png', 'webp', 'pdf'];
-        $maxBytes = 10 * 1024 * 1024;
+        $maxBytes = 2 * 1024 * 1024;
         $count = count($files['name']);
 
         for ($i = 0; $i < $count; $i++) {

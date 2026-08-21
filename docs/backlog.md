@@ -117,6 +117,7 @@ bautizos, baby shower, matrimonios, cumpleaños, cajas de vino y joyeros.
 | BK-904 | P1 | Por hacer | Márgenes sobre el neto | Margen calculado por producto/pedido a partir del costo neto |
 | BK-905 | P1 | Por hacer | Impuestos por producto/categoría (IVA, ILA, etc.) | Impuestos configurables y aplicados según tipo de producto |
 | BK-906 | P1 | Por hacer | Conexión ventas ↔ facturación | Vincular pedidos/ventas con documentos fiscales y costos |
+| BK-907 | P2 | Por hacer | Purga de adjuntos de proyectos cada 30 días | Borrar archivos de `public/uploads/projects/` con más de 30 días |
 
 > Pregunta abierta (define el diseño): ¿las facturas se generan desde los pedidos
 > de la tienda (venta = factura), o es un libro de facturación manual que luego se
