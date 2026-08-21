@@ -30,6 +30,23 @@ class CatalogController extends Controller
         ]);
     }
 
+    public function search(): void
+    {
+        $q = trim($_GET['q'] ?? '');
+        $products = $q !== '' ? Product::search($q) : [];
+
+        $this->view('products/search', [
+            'pageTitle' => ($q !== '' ? 'Buscar: ' . $q : 'Buscar') . ' — KAMAQ',
+            'metaDescription' => 'Busca regalos personalizados y mementos en KAMAQ.',
+            'products' => $products,
+            'q' => $q,
+            'breadcrumbs' => [
+                ['label' => 'Inicio', 'url' => url('')],
+                ['label' => 'Búsqueda', 'url' => null],
+            ],
+        ]);
+    }
+
     public function category(string $slug): void
     {
         $category = Category::findBySlug($slug);

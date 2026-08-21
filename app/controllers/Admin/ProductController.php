@@ -108,6 +108,24 @@ class ProductController extends Controller
         redirect('/admin/productos/editar/' . $productId);
     }
 
+    public function toggleFeatured(int $id): void
+    {
+        Auth::requireLogin();
+        if (!csrf_verify($_POST['csrf_token'] ?? null)) {
+            flash('error', 'Sesión inválida.');
+            redirect('/admin/productos');
+        }
+        $product = Product::find($id);
+        if (!$product) {
+            flash('error', 'Producto no encontrado.');
+            redirect('/admin/productos');
+        }
+        $isFeatured = !empty($product['is_featured']);
+        Product::update($id, ['is_featured' => $isFeatured ? 0 : 1]);
+        flash('success', $isFeatured ? 'Producto quitado de destacados.' : 'Producto destacado.');
+        redirect('/admin/productos');
+    }
+
     private function dataFromRequest(): array
     {
         $name = trim($_POST['name'] ?? '');

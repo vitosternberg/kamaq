@@ -11,9 +11,31 @@ class CategoryController extends Controller
     public function index(): void
     {
         Auth::requireLogin();
+
+        $allowedPerPage = [15, 50, 100];
+        $perPage = (int) ($_GET['per_page'] ?? 15);
+        if (!in_array($perPage, $allowedPerPage, true)) {
+            $perPage = 15;
+        }
+
+        // Se pagina por categorías raíz; cada raíz arrastra todas sus subcategorías.
+        $tree = Category::treeWithCounts();
+        $total = count($tree);
+        $totalPages = max(1, (int) ceil($total / $perPage));
+
+        $page = max(1, (int) ($_GET['page'] ?? 1));
+        if ($page > $totalPages) {
+            $page = $totalPages;
+        }
+
+        $rootsPage = array_slice($tree, ($page - 1) * $perPage, $perPage);
+
         $this->view('admin/categories/index', [
             'pageTitle' => 'Categorías',
-            'categories' => Category::flatten(Category::treeWithCounts()),
+            'categories' => Category::flatten($rootsPage),
+            'page' => $page,
+            'totalPages' => $totalPages,
+            'perPage' => $perPage,
         ], 'admin');
     }
 

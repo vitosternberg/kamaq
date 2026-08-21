@@ -57,6 +57,7 @@ $router = new Router();
 // --- Público ---
 $router->get('', 'App\Controllers\HomeController@index');
 $router->get('catalogo', 'App\Controllers\CatalogController@index');
+$router->get('buscar', 'App\Controllers\CatalogController@search');
 $router->get('categoria/{slug}', 'App\Controllers\CatalogController@category');
 $router->get('producto/{slug}', 'App\Controllers\CatalogController@show');
 $router->get('carrito', 'App\Controllers\CartController@index');
@@ -87,6 +88,7 @@ $router->post('admin/productos/guardar', 'App\Controllers\Admin\ProductControlle
 $router->get('admin/productos/editar/{id}', 'App\Controllers\Admin\ProductController@edit');
 $router->post('admin/productos/actualizar/{id}', 'App\Controllers\Admin\ProductController@update');
 $router->post('admin/productos/eliminar/{id}', 'App\Controllers\Admin\ProductController@delete');
+$router->post('admin/productos/destacado/{id}', 'App\Controllers\Admin\ProductController@toggleFeatured');
 $router->post('admin/productos/imagen/eliminar/{id}', 'App\Controllers\Admin\ProductController@deleteImage');
 $router->get('admin/pedidos', 'App\Controllers\Admin\OrderController@index');
 $router->get('admin/pedidos/{id}', 'App\Controllers\Admin\OrderController@show');

@@ -1,9 +1,31 @@
+<?php
+$baseUrl = url('admin/categorias');
+$pageUrl = function (int $p) use ($baseUrl, $perPage): string {
+    return $baseUrl . '?page=' . $p . '&per_page=' . (int) $perPage;
+};
+$windowStart = max(1, $page - 2);
+$windowEnd = min($totalPages, $page + 2);
+?>
 <div class="topbar">
   <h1>Categorías</h1>
   <a class="btn btn--primary" href="<?= url('admin/categorias/crear') ?>">Nueva categoría</a>
 </div>
 
 <div class="card">
+  <div class="table-toolbar">
+    <form method="get" action="<?= $baseUrl ?>" class="perpage">
+      <label for="per_page">Mostrar</label>
+      <select name="per_page" id="per_page" class="form-control" onchange="this.form.submit()">
+        <option value="15" <?= $perPage === 15 ? 'selected' : '' ?>>15</option>
+        <option value="50" <?= $perPage === 50 ? 'selected' : '' ?>>50</option>
+        <option value="100" <?= $perPage === 100 ? 'selected' : '' ?>>100</option>
+      </select>
+      <span>categorías por página</span>
+    </form>
+
+    <span class="table-meta">Página <?= $page ?> de <?= $totalPages ?></span>
+  </div>
+
   <table class="data">
     <thead><tr><th>Nombre</th><th>Slug</th><th>Productos</th><th>Orden</th><th>Estado</th><th></th></tr></thead>
     <tbody>
@@ -25,4 +47,30 @@
     <?php endforeach; ?>
     </tbody>
   </table>
+
+  <?php if ($totalPages > 1): ?>
+    <nav class="pagination">
+      <?php if ($page > 1): ?>
+        <a class="btn btn--outline btn--sm" href="<?= $pageUrl($page - 1) ?>">Anterior</a>
+      <?php endif; ?>
+
+      <?php if ($windowStart > 1): ?>
+        <a class="btn btn--outline btn--sm" href="<?= $pageUrl(1) ?>">1</a>
+        <?php if ($windowStart > 2): ?><span class="pagination-ellipsis">…</span><?php endif; ?>
+      <?php endif; ?>
+
+      <?php for ($i = $windowStart; $i <= $windowEnd; $i++): ?>
+        <a class="btn btn--sm <?= $i === $page ? 'btn--primary' : 'btn--outline' ?>" href="<?= $pageUrl($i) ?>"><?= $i ?></a>
+      <?php endfor; ?>
+
+      <?php if ($windowEnd < $totalPages): ?>
+        <?php if ($windowEnd < $totalPages - 1): ?><span class="pagination-ellipsis">…</span><?php endif; ?>
+        <a class="btn btn--outline btn--sm" href="<?= $pageUrl($totalPages) ?>"><?= $totalPages ?></a>
+      <?php endif; ?>
+
+      <?php if ($page < $totalPages): ?>
+        <a class="btn btn--outline btn--sm" href="<?= $pageUrl($page + 1) ?>">Siguiente</a>
+      <?php endif; ?>
+    </nav>
+  <?php endif; ?>
 </div>
