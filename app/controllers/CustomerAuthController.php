@@ -33,7 +33,8 @@ class CustomerAuthController extends Controller
         $name = trim($_POST['name'] ?? '');
         $email = trim($_POST['email'] ?? '');
         $password = (string) ($_POST['password'] ?? '');
-        $isRm = isset($_POST['is_rm']);
+        $region = trim($_POST['region'] ?? '');
+        $city = trim($_POST['city'] ?? '');
 
         $errors = [];
         if ($name === '') {
@@ -44,6 +45,9 @@ class CustomerAuthController extends Controller
         }
         if (strlen($password) < 6) {
             $errors[] = 'La contraseña debe tener al menos 6 caracteres.';
+        }
+        if (!in_array($region, chile_regions(), true)) {
+            $errors[] = 'Selecciona tu región.';
         }
         if (CustomerAccount::emailExists($email)) {
             $errors[] = 'Ya existe una cuenta con ese correo.';
@@ -61,9 +65,9 @@ class CustomerAuthController extends Controller
             'email' => $email,
             'password_hash' => password_hash($password, PASSWORD_DEFAULT),
             'phone' => trim($_POST['phone'] ?? ''),
-            'region' => $isRm ? 'Región Metropolitana' : 'Otra región',
-            'is_rm' => $isRm ? 1 : 0,
-            'city' => trim($_POST['city'] ?? ''),
+            'region' => $region,
+            'is_rm' => is_rm_region($region) ? 1 : 0,
+            'city' => $city,
             'address' => trim($_POST['address'] ?? ''),
             'email_verified' => 0,
             'verify_token' => $verifyToken,
