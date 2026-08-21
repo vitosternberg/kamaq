@@ -107,3 +107,13 @@ function old(string $key, string $default = ''): string
 {
     return (string) ($_SESSION['old'][$key] ?? $default);
 }
+
+function send_mail(string $to, string $subject, string $body): bool
+{
+    $from = (string) config('contact_email', 'contacto@kamaq.cl');
+    $headers = "From: " . $from . "\r\n" .
+               "Reply-To: " . $from . "\r\n" .
+               "MIME-Version: 1.0\r\n" .
+               "Content-Type: text/plain; charset=UTF-8\r\n";
+    return @mail($to, $subject, $body, $headers);
+}

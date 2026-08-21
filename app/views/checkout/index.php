@@ -5,37 +5,37 @@
     <?= csrf_field() ?>
     <div class="form-group">
       <label>Nombre completo</label>
-      <input type="text" name="name" class="form-control" value="<?= e(old('name')) ?>" required>
+      <input type="text" name="name" class="form-control" value="<?= e($customer['name']) ?>" required>
     </div>
     <div class="form-group">
       <label>Email</label>
-      <input type="email" name="email" class="form-control" value="<?= e(old('email')) ?>" required>
+      <input type="email" class="form-control" value="<?= e($customer['email']) ?>" disabled>
     </div>
     <div class="form-group">
       <label>Teléfono</label>
-      <input type="text" name="phone" class="form-control" value="<?= e(old('phone')) ?>">
+      <input type="text" name="phone" class="form-control" value="<?= e($customer['phone'] ?? '') ?>">
     </div>
     <div class="form-group">
       <label>Dirección de envío</label>
-      <input type="text" name="address" class="form-control" value="<?= e(old('address')) ?>">
+      <input type="text" name="address" class="form-control" value="<?= e($customer['address'] ?? '') ?>">
     </div>
     <div class="form-group">
       <label>Ciudad</label>
-      <input type="text" name="city" class="form-control" value="<?= e(old('city')) ?>">
+      <input type="text" name="city" class="form-control" value="<?= e($customer['city'] ?? '') ?>">
     </div>
     <div class="form-group">
       <label>Región</label>
-      <input type="text" name="region" class="form-control" value="<?= e(old('region')) ?>">
+      <input type="text" class="form-control" value="<?= e($customer['region'] ?? '') ?>" disabled>
     </div>
 
-    <?php if (!empty($shippingMethods)): ?>
+    <?php if (!empty($shippingOptions)): ?>
       <div class="form-group">
         <label>Método de envío</label>
-        <?php foreach ($shippingMethods as $i => $m): ?>
+        <?php foreach ($shippingOptions as $i => $o): ?>
           <div>
             <label style="font-weight:400; display:flex; align-items:center; gap:8px;">
-              <input type="radio" name="shipping_method_id" value="<?= (int) $m['id'] ?>" data-price="<?= (float) $m['price'] ?>" <?= $i === 0 ? 'checked' : '' ?>>
-              <?= e($m['name']) ?> — <?= (float) $m['price'] > 0 ? money($m['price']) : 'Gratis' ?>
+              <input type="radio" name="shipping_option" value="<?= e($o['key']) ?>" data-price="<?= (float) $o['price'] ?>" <?= $i === 0 ? 'checked' : '' ?>>
+              <?= e($o['name']) ?> — <?= (float) $o['price'] > 0 ? money($o['price']) : 'Gratis' ?>
             </label>
           </div>
         <?php endforeach; ?>
@@ -67,14 +67,14 @@
 
 <script>
 (function () {
-  var radios = document.querySelectorAll('input[name="shipping_method_id"]');
+  var radios = document.querySelectorAll('input[name="shipping_option"]');
   var shipEl = document.getElementById('shipping-total');
   var totalEl = document.getElementById('order-total');
   if (!radios.length || !shipEl || !totalEl) { return; }
   var subtotal = <?= (float) $subtotal ?>;
   function fmt(n) { return '$' + Math.round(n).toLocaleString('es-CL'); }
   function refresh() {
-    var el = document.querySelector('input[name="shipping_method_id"]:checked');
+    var el = document.querySelector('input[name="shipping_option"]:checked');
     var price = el ? parseFloat(el.getAttribute('data-price')) : 0;
     shipEl.textContent = price > 0 ? fmt(price) : 'Gratis';
     totalEl.textContent = fmt(subtotal + price);

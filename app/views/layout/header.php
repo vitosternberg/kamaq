@@ -1,4 +1,4 @@
-<?php $cartCount = \App\Core\Cart::count(); ?>
+<?php $cartCount = \App\Core\Cart::count(); $customer = \App\Core\CustomerAuth::user(); ?>
 <header class="site-header">
   <div class="container">
     <div class="header-main">
@@ -9,6 +9,11 @@
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         </button>
       </form>
+      <?php if ($customer): ?>
+        <a class="account-link" href="<?= url('cuenta/salir') ?>">Salir</a>
+      <?php else: ?>
+        <a class="account-link" href="<?= url('cuenta/ingresar') ?>">Ingresar</a>
+      <?php endif; ?>
       <a class="cart-link" href="<?= url('carrito') ?>">
         <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
         <span class="cart-link__label">Carrito</span>

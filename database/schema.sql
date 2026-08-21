@@ -69,8 +69,31 @@ CREATE TABLE IF NOT EXISTS users (
   UNIQUE KEY uq_users_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS customers (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  name VARCHAR(160) NOT NULL,
+  email VARCHAR(160) NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  phone VARCHAR(40) NULL,
+  region VARCHAR(120) NULL,
+  is_rm TINYINT(1) NOT NULL DEFAULT 0,
+  city VARCHAR(120) NULL,
+  address VARCHAR(255) NULL,
+  email_verified TINYINT(1) NOT NULL DEFAULT 0,
+  verify_token VARCHAR(64) NULL,
+  reset_token VARCHAR(64) NULL,
+  reset_token_expires DATETIME NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_customers_email (email),
+  KEY idx_customers_verify_token (verify_token),
+  KEY idx_customers_reset_token (reset_token)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS orders (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  customer_id INT UNSIGNED NULL,
   order_number VARCHAR(32) NOT NULL,
   customer_name VARCHAR(160) NOT NULL,
   customer_email VARCHAR(160) NOT NULL,
@@ -124,7 +147,11 @@ INSERT IGNORE INTO settings (`key`, `value`) VALUES
   ('contact_phone', ''),
   ('whatsapp', ''),
   ('shipping_default', '0'),
-  ('low_stock_threshold', '5');
+  ('low_stock_threshold', '5'),
+  ('shipping_rm_price', '3990'),
+  ('shipping_free_threshold', '15000'),
+  ('shipping_express_price', '4990'),
+  ('shipping_outside_price', '6990');
 
 INSERT IGNORE INTO categories (id, parent_id, name, slug, sort_order, is_active) VALUES
   (1, NULL, 'Regalos Corporativos', 'regalos-corporativos', 1, 1),

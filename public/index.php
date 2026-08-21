@@ -70,6 +70,16 @@ $router->get('checkout/gracias', 'App\Controllers\CheckoutController@thanks');
 $router->get('contacto', 'App\Controllers\ContactController@index');
 $router->post('contacto', 'App\Controllers\ContactController@store');
 $router->get('corporativo', 'App\Controllers\CorporateController@index');
+$router->get('cuenta/registro', 'App\Controllers\CustomerAuthController@showRegister');
+$router->post('cuenta/registro', 'App\Controllers\CustomerAuthController@register');
+$router->get('cuenta/verificar/{token}', 'App\Controllers\CustomerAuthController@verify');
+$router->get('cuenta/ingresar', 'App\Controllers\CustomerAuthController@showLogin');
+$router->post('cuenta/ingresar', 'App\Controllers\CustomerAuthController@login');
+$router->get('cuenta/salir', 'App\Controllers\CustomerAuthController@logout');
+$router->get('cuenta/olvide', 'App\Controllers\CustomerAuthController@showForgot');
+$router->post('cuenta/olvide', 'App\Controllers\CustomerAuthController@forgot');
+$router->get('cuenta/recuperar/{token}', 'App\Controllers\CustomerAuthController@showReset');
+$router->post('cuenta/recuperar/{token}', 'App\Controllers\CustomerAuthController@reset');
 
 // --- Administración ---
 $router->get('admin/login', 'App\Controllers\Admin\AuthController@showLogin');
@@ -96,9 +106,7 @@ $router->post('admin/pedidos/estado/{id}', 'App\Controllers\Admin\OrderControlle
 $router->get('admin/clientes', 'App\Controllers\Admin\CustomerController@index');
 $router->get('admin/clientes/{email}', 'App\Controllers\Admin\CustomerController@show');
 $router->get('admin/envios', 'App\Controllers\Admin\ShippingController@index');
-$router->post('admin/envios/guardar', 'App\Controllers\Admin\ShippingController@store');
-$router->post('admin/envios/actualizar/{id}', 'App\Controllers\Admin\ShippingController@update');
-$router->post('admin/envios/eliminar/{id}', 'App\Controllers\Admin\ShippingController@delete');
+$router->post('admin/envios/politica', 'App\Controllers\Admin\ShippingController@savePolicy');
 $router->get('admin/inventario', 'App\Controllers\Admin\InventoryController@index');
 $router->post('admin/inventario/actualizar', 'App\Controllers\Admin\InventoryController@updateProduct');
 $router->post('admin/inventario/umbral', 'App\Controllers\Admin\InventoryController@saveThreshold');

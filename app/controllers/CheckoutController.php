@@ -4,11 +4,11 @@ namespace App\Controllers;
 
 use App\Core\Cart;
 use App\Core\Controller;
-use App\Models\Customer;
+use App\Core\CustomerAuth;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
-use App\Models\ShippingMethod;
+use App\Models\Shipping;
 
 class CheckoutController extends Controller
 {
@@ -18,13 +18,20 @@ class CheckoutController extends Controller
         if (!$items) {
             redirect('carrito');
         }
-        $methods = ShippingMethod::active();
+        CustomerAuth::requireLogin();
+
+        $customer = CustomerAuth::user();
+        $subtotal = Cart::subtotal();
+        $isRm = !empty($customer['is_rm']);
+        $options = Shipping::options($isRm, $subtotal);
+
         $this->view('checkout/index', [
             'pageTitle' => 'Finalizar compra — KAMAQ',
             'items' => $items,
-            'subtotal' => Cart::subtotal(),
-            'shippingMethods' => $methods,
-            'shipping' => $methods ? (float) $methods[0]['price'] : 0.0,
+            'subtotal' => $subtotal,
+            'customer' => $customer,
+            'shippingOptions' => $options,
+            'shipping' => $options ? $options[0]['price'] : 0.0,
             'breadcrumbs' => [
                 ['label' => 'Inicio', 'url' => url('')],
                 ['label' => 'Carrito', 'url' => url('carrito')],
@@ -43,34 +50,47 @@ class CheckoutController extends Controller
         if (!$items) {
             redirect('carrito');
         }
-
-        $name = trim($_POST['name'] ?? '');
-        $email = trim($_POST['email'] ?? '');
-        if ($name === '' || $email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            remember_old($_POST);
-            flash('error', 'Revisa tus datos: nombre y correo son obligatorios.');
-            redirect('checkout');
-        }
+        CustomerAuth::requireLogin();
+        $customer = CustomerAuth::user();
 
         $subtotal = Cart::subtotal();
-        $method = $this->selectedMethod((int) ($_POST['shipping_method_id'] ?? 0));
-        $shipping = $method ? (float) $method['price'] : 0.0;
+        $isRm = !empty($customer['is_rm']);
+        $shipKey = (string) ($_POST['shipping_option'] ?? '');
+        $shipping = Shipping::priceFor($shipKey, $isRm, $subtotal);
+        $optionName = $this->optionName($shipKey, $isRm, $subtotal);
         $total = $subtotal + $shipping;
         $orderNumber = 'KQ-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(4)));
-        $isNewCustomer = Customer::findByEmail($email) === null;
+
+        $name = trim($_POST['name'] ?? '');
+        if ($name === '') {
+            $name = (string) $customer['name'];
+        }
+        $phone = trim($_POST['phone'] ?? '');
+        if ($phone === '') {
+            $phone = (string) ($customer['phone'] ?? '');
+        }
+        $address = trim($_POST['address'] ?? '');
+        if ($address === '') {
+            $address = (string) ($customer['address'] ?? '');
+        }
+        $city = trim($_POST['city'] ?? '');
+        if ($city === '') {
+            $city = (string) ($customer['city'] ?? '');
+        }
 
         $orderId = Order::create([
+            'customer_id' => (int) $customer['id'],
             'order_number' => $orderNumber,
             'customer_name' => $name,
-            'customer_email' => $email,
-            'customer_phone' => trim($_POST['phone'] ?? ''),
-            'address' => trim($_POST['address'] ?? ''),
-            'city' => trim($_POST['city'] ?? ''),
-            'region' => trim($_POST['region'] ?? ''),
+            'customer_email' => (string) $customer['email'],
+            'customer_phone' => $phone,
+            'address' => $address,
+            'city' => $city,
+            'region' => (string) ($customer['region'] ?? ''),
             'notes' => trim($_POST['notes'] ?? ''),
             'subtotal' => $subtotal,
             'shipping' => $shipping,
-            'shipping_method' => $method ? $method['name'] : null,
+            'shipping_method' => $optionName,
             'total' => $total,
             'payment_method' => 'pagaaqui',
             'payment_status' => 'pendiente',
@@ -94,7 +114,6 @@ class CheckoutController extends Controller
         $_SESSION['last_order'] = [
             'order_number' => $orderNumber,
             'total' => $total,
-            'new_customer' => $isNewCustomer,
         ];
         redirect('checkout/gracias');
     }
@@ -116,13 +135,14 @@ class CheckoutController extends Controller
         ]);
     }
 
-    private function selectedMethod(int $id): ?array
+    private function optionName(string $key, bool $isRm, float $subtotal): string
     {
-        foreach (ShippingMethod::active() as $method) {
-            if ((int) $method['id'] === $id) {
-                return $method;
+        foreach (Shipping::options($isRm, $subtotal) as $option) {
+            if ($option['key'] === $key) {
+                return $option['name'];
             }
         }
-        return null;
+        $all = Shipping::options($isRm, $subtotal);
+        return $all ? $all[0]['name'] : 'Envío';
     }
 }

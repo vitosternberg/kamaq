@@ -102,6 +102,8 @@ img { max-width: 100%; display: block; }
   white-space: nowrap;
 }
 .cart-link:hover { color: var(--brand); }
+.account-link { color: var(--text); font-weight: 600; white-space: nowrap; }
+.account-link:hover { color: var(--brand); }
 .cart-link__count {
   display: inline-flex;
   align-items: center;
@@ -382,6 +384,18 @@ main { padding: 28px 0 56px; }
   font-family: inherit;
 }
 textarea.form-control { min-height: 120px; }
+.form-hint { color: var(--muted); font-size: 12px; margin-top: 4px; }
+.form-check { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 14px; }
+.form-check label { font-weight: 500; }
+
+/* Cuenta */
+.auth-box {
+  max-width: 460px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+}
 
 /* Carrito */
 .cart-table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: var(--radius); overflow: hidden; }
