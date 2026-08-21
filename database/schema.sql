@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS products (
   sale_price DECIMAL(12,2) NULL,
   stock INT NOT NULL DEFAULT 0,
   is_featured TINYINT(1) NOT NULL DEFAULT 0,
+  is_bestseller TINYINT(1) NOT NULL DEFAULT 0,
   is_active TINYINT(1) NOT NULL DEFAULT 1,
   meta_title VARCHAR(160) NULL,
   meta_description VARCHAR(255) NULL,

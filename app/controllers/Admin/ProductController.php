@@ -126,6 +126,24 @@ class ProductController extends Controller
         redirect('/admin/productos');
     }
 
+    public function toggleBestseller(int $id): void
+    {
+        Auth::requireLogin();
+        if (!csrf_verify($_POST['csrf_token'] ?? null)) {
+            flash('error', 'Sesión inválida.');
+            redirect('/admin/productos');
+        }
+        $product = Product::find($id);
+        if (!$product) {
+            flash('error', 'Producto no encontrado.');
+            redirect('/admin/productos');
+        }
+        $isBestseller = !empty($product['is_bestseller']);
+        Product::update($id, ['is_bestseller' => $isBestseller ? 0 : 1]);
+        flash('success', $isBestseller ? 'Producto quitado de super ventas.' : 'Producto marcado como super venta.');
+        redirect('/admin/productos');
+    }
+
     private function dataFromRequest(): array
     {
         $name = trim($_POST['name'] ?? '');
@@ -142,6 +160,7 @@ class ProductController extends Controller
             'sale_price' => $salePrice !== '' ? (float) $salePrice : null,
             'stock' => (int) ($_POST['stock'] ?? 0),
             'is_featured' => isset($_POST['is_featured']) ? 1 : 0,
+            'is_bestseller' => isset($_POST['is_bestseller']) ? 1 : 0,
             'is_active' => isset($_POST['is_active']) ? 1 : 0,
             'meta_title' => trim($_POST['meta_title'] ?? ''),
             'meta_description' => trim($_POST['meta_description'] ?? ''),

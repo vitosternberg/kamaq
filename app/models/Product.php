@@ -18,6 +18,15 @@ class Product extends Model
         return static::db()->query($sql)->fetchAll();
     }
 
+    // "Destacados del mes": productos marcados como super ventas.
+    public static function bestsellers(int $limit = 8): array
+    {
+        $sql = 'SELECT p.*, ' . self::COVER_SELECT . ' FROM products p
+                WHERE p.is_active = 1 AND p.is_bestseller = 1
+                ORDER BY p.created_at DESC LIMIT ' . (int) $limit;
+        return static::db()->query($sql)->fetchAll();
+    }
+
     // Productos activos en una o varias categorías (por ejemplo, una categoría y sus hijas).
     public static function byCategories(array $ids): array
     {

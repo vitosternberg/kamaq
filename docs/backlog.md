@@ -50,6 +50,7 @@ bautizos, baby shower, matrimonios, cumpleaños, cajas de vino y joyeros.
 | BK-305 | P1 | En progreso | Búsqueda de productos | Búsqueda por nombre/descripción (modelo listo; falta UI/ruta) |
 | BK-306 | P1 | En progreso | Precio normal vs. oferta y stock visible | Oferta reflejada; "agotado" aún no se muestra en público |
 | BK-307 | P3 | Por hacer | Filtros (precio, categoría) y orden | Ordenar/filtrar catálogo |
+| BK-308 | P1 | Hecho | Sección "Destacados del mes" (super ventas) en portada | Productos marcados como super venta se muestran tras el hero |
 
 ## 4. Carrito y checkout
 
@@ -105,6 +106,21 @@ bautizos, baby shower, matrimonios, cumpleaños, cajas de vino y joyeros.
 | BK-803 | P3 | Por hacer | Valoraciones y comentarios de clientes |
 | BK-804 | P3 | Por hacer | Lista de deseos |
 | BK-805 | P3 | Por hacer | Multiidioma (ES/EN) |
+
+## 9. Contabilidad y facturación
+
+| ID | Prioridad | Estado | Tarea | Criterio de aceptación |
+|----|-----------|--------|-------|------------------------|
+| BK-901 | P1 | Por hacer | Ingreso de facturas (documentos fiscales) | Registrar factura de compra/venta con número, fecha, proveedor/cliente |
+| BK-902 | P1 | Por hacer | Libro de ventas | Listado de documentos de venta con totales y estado tributario |
+| BK-903 | P1 | Por hacer | Costo neto por producto | Campo de costo neto en producto para calcular márgenes |
+| BK-904 | P1 | Por hacer | Márgenes sobre el neto | Margen calculado por producto/pedido a partir del costo neto |
+| BK-905 | P1 | Por hacer | Impuestos por producto/categoría (IVA, ILA, etc.) | Impuestos configurables y aplicados según tipo de producto |
+| BK-906 | P1 | Por hacer | Conexión ventas ↔ facturación | Vincular pedidos/ventas con documentos fiscales y costos |
+
+> Pregunta abierta (define el diseño): ¿las facturas se generan desde los pedidos
+> de la tienda (venta = factura), o es un libro de facturación manual que luego se
+> concilia con las ventas?
 
 ---
 

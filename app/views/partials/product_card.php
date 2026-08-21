@@ -16,7 +16,7 @@ $productUrl = url('producto/' . e($product['slug']));
   <a class="product-card__img" href="<?= $productUrl ?>">
     <img src="<?= e($img) ?>" alt="<?= e($product['name']) ?>" loading="lazy">
     <?php if ($discount > 0): ?><span class="badge badge--discount">-<?= $discount ?>%</span><?php endif; ?>
-    <?php if (!empty($product['is_featured'])): ?><span class="badge badge--featured">Destacado</span><?php endif; ?>
+    <?php if (!empty($product['is_bestseller'])): ?><span class="badge badge--bestseller">Super venta</span><?php elseif (!empty($product['is_featured'])): ?><span class="badge badge--featured">Destacado</span><?php endif; ?>
   </a>
   <div class="product-card__body">
     <h3 class="product-card__title"><a href="<?= $productUrl ?>"><?= e($product['name']) ?></a></h3>

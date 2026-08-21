@@ -40,4 +40,16 @@ class PageController extends Controller
             ],
         ]);
     }
+
+    public function projects(): void
+    {
+        $this->view('pages/projects', [
+            'pageTitle' => 'Proyectos — KAMAQ',
+            'metaDescription' => 'Tráenos tu diseño y nosotros nos encargamos. Creamos junto contigo el proyecto para tu ocasión especial.',
+            'breadcrumbs' => [
+                ['label' => 'Inicio', 'url' => url('')],
+                ['label' => 'Proyectos', 'url' => null],
+            ],
+        ]);
+    }
 }

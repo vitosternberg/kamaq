@@ -70,6 +70,7 @@ $router->get('checkout/gracias', 'App\Controllers\CheckoutController@thanks');
 $router->get('contacto', 'App\Controllers\ContactController@index');
 $router->post('contacto', 'App\Controllers\ContactController@store');
 $router->get('corporativo', 'App\Controllers\CorporateController@index');
+$router->get('proyectos', 'App\Controllers\PageController@projects');
 $router->get('politica-envio', 'App\Controllers\PageController@shipping');
 $router->get('proteccion-datos', 'App\Controllers\PageController@privacy');
 $router->get('como-comprar', 'App\Controllers\PageController@howToBuy');
@@ -102,6 +103,7 @@ $router->get('admin/productos/editar/{id}', 'App\Controllers\Admin\ProductContro
 $router->post('admin/productos/actualizar/{id}', 'App\Controllers\Admin\ProductController@update');
 $router->post('admin/productos/eliminar/{id}', 'App\Controllers\Admin\ProductController@delete');
 $router->post('admin/productos/destacado/{id}', 'App\Controllers\Admin\ProductController@toggleFeatured');
+$router->post('admin/productos/superventa/{id}', 'App\Controllers\Admin\ProductController@toggleBestseller');
 $router->post('admin/productos/imagen/eliminar/{id}', 'App\Controllers\Admin\ProductController@deleteImage');
 $router->get('admin/pedidos', 'App\Controllers\Admin\OrderController@index');
 $router->get('admin/pedidos/{id}', 'App\Controllers\Admin\OrderController@show');

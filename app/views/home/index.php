@@ -39,6 +39,19 @@
 </section>
 <?php endif; ?>
 
+<?php if (!empty($bestsellers)): ?>
+<section class="bestsellers">
+  <div class="bestsellers__head">
+    <h2 class="section-title">Destacados del mes</h2>
+  </div>
+  <div class="product-grid">
+    <?php foreach ($bestsellers as $product): ?>
+      <?php include BASE_PATH . '/app/views/partials/product_card.php'; ?>
+    <?php endforeach; ?>
+  </div>
+</section>
+<?php endif; ?>
+
 <div class="trust-bar">
   <div class="trust-bar__item"><span class="trust-bar__icon">✓</span><span>Envío a todo Chile</span></div>
   <div class="trust-bar__item"><span class="trust-bar__icon">✓</span><span>Personalización incluida</span></div>

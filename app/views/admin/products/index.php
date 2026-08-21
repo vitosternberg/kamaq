@@ -5,7 +5,7 @@
 
 <div class="card">
   <table class="data">
-    <thead><tr><th></th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Estado</th><th>Destacado</th><th></th></tr></thead>
+    <thead><tr><th></th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Estado</th><th>Destacado</th><th>Super venta</th><th></th></tr></thead>
     <tbody>
     <?php foreach ($products as $p): ?>
       <tr>
@@ -19,6 +19,12 @@
           <form method="post" action="<?= url('admin/productos/destacado/' . (int) $p['id']) ?>" style="display:inline;">
             <?= csrf_field() ?>
             <button class="btn btn--sm <?= $p['is_featured'] ? 'btn--primary' : 'btn--outline' ?>" type="submit"><?= $p['is_featured'] ? '★ Destacado' : '☆ Destacar' ?></button>
+          </form>
+        </td>
+        <td>
+          <form method="post" action="<?= url('admin/productos/superventa/' . (int) $p['id']) ?>" style="display:inline;">
+            <?= csrf_field() ?>
+            <button class="btn btn--sm <?= $p['is_bestseller'] ? 'btn--primary' : 'btn--outline' ?>" type="submit"><?= $p['is_bestseller'] ? '★ Super venta' : '☆ Super venta' ?></button>
           </form>
         </td>
         <td>

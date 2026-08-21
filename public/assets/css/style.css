@@ -284,6 +284,12 @@ main { padding: 28px 0 56px; }
 /* Secciones */
 .section-title { font-size: 24px; margin: 0 0 20px; }
 
+/* Destacados del mes */
+.bestsellers { margin-top: 40px; }
+.bestsellers__head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 6px 16px; }
+.bestsellers__head .section-title { margin-bottom: 4px; }
+.bestsellers__sub { margin: 0 0 20px; color: var(--muted); font-size: 14px; }
+
 /* Búsqueda */
 .search-summary { color: var(--muted); margin: 0 0 20px; }
 .search-empty { color: var(--muted); margin: 0 0 32px; }
@@ -343,6 +349,7 @@ main { padding: 28px 0 56px; }
 }
 .badge--discount { left: 10px; background: #b3261e; }
 .badge--featured { right: 10px; background: var(--brand); }
+.badge--bestseller { right: 10px; background: #d84315; }
 
 /* Botones */
 .btn {

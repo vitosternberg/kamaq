@@ -13,6 +13,7 @@ class HomeController extends Controller
             'pageTitle' => 'KAMAQ — Regalos corporativos y mementos personalizados',
             'metaDescription' => 'Tienda de regalos corporativos personalizados, mementos para bautizos, baby shower, matrimonios, cumpleaños, cajas de vino y joyeros.',
             'featured' => Product::featured(8),
+            'bestsellers' => Product::bestsellers(8),
         ]);
     }
 }

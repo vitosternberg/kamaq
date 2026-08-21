@@ -59,6 +59,10 @@
       <label for="is_featured">Destacado</label>
     </div>
     <div class="form-check">
+      <input type="checkbox" name="is_bestseller" id="is_bestseller" <?= (!empty($product['is_bestseller'])) ? 'checked' : '' ?>>
+      <label for="is_bestseller">Super venta (Destacado del mes)</label>
+    </div>
+    <div class="form-check">
       <input type="checkbox" name="is_active" id="is_active" <?= (!$product || $product['is_active']) ? 'checked' : '' ?>>
       <label for="is_active">Producto activo</label>
     </div>

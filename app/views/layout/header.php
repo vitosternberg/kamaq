@@ -24,6 +24,7 @@
       <a href="<?= url('') ?>">Inicio</a>
       <a href="<?= url('catalogo') ?>">Catálogo</a>
       <a href="<?= url('corporativo') ?>">Corporativo</a>
+      <a href="<?= url('proyectos') ?>">Proyectos</a>
       <a href="<?= url('contacto') ?>">Contacto</a>
     </nav>
   </div>
