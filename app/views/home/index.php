@@ -10,9 +10,7 @@
       }
       ?>
       <article class="hero-slide<?= $i === 0 ? ' is-active' : '' ?>" data-slide>
-        <div class="hero-slide__media">
-          <img src="<?= e(!empty($product['cover']) ? upload('products/' . $product['cover']) : asset('img/placeholder.svg')) ?>" alt="<?= e($product['name']) ?>" loading="<?= $i === 0 ? 'eager' : 'lazy' ?>">
-        </div>
+        <img class="hero-slide__bg" src="<?= e(!empty($product['cover']) ? upload('products/' . $product['cover']) : asset('img/placeholder.svg')) ?>" alt="<?= e($product['name']) ?>" loading="<?= $i === 0 ? 'eager' : 'lazy' ?>">
         <div class="hero-slide__content">
           <p class="hero-slide__tag">Destacado</p>
           <h2><?= e($product['name']) ?></h2>
