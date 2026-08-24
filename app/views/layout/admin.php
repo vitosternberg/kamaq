@@ -20,6 +20,7 @@ $isAuth = \App\Core\Auth::check();
     <a href="<?= url('admin/inventario') ?>">Inventario</a>
     <a href="<?= url('admin/categorias') ?>">Categorías</a>
     <a href="<?= url('admin/pedidos') ?>">Pedidos</a>
+    <a href="<?= url('admin/cotizaciones') ?>">Cotizaciones</a>
     <a href="<?= url('admin/clientes') ?>">Clientes</a>
     <a href="<?= url('admin/envios') ?>">Envíos</a>
     <a href="<?= url('admin/impuestos') ?>">Impuestos</a>

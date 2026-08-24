@@ -146,6 +146,24 @@ function send_mail(string $to, string $subject, string $body): bool
     return @mail($to, $subject, $body, $headers);
 }
 
+function quote_status_badge(string $status): string
+{
+    $classes = [
+        'borrador' => 'badge--warn',
+        'enviada' => 'badge--ok',
+        'aceptada' => 'badge--vip',
+        'rechazada' => 'badge--off',
+    ];
+    $class = $classes[$status] ?? 'badge--off';
+    return '<span class="badge ' . $class . '">' . e($status) . '</span>';
+}
+
+function format_tax_rate($rate): string
+{
+    $s = number_format((float) $rate, 2, ',', '.');
+    return rtrim(rtrim($s, '0'), ',');
+}
+
 function chile_communes(): array
 {
     return [

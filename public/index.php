@@ -122,6 +122,16 @@ $router->post('admin/inventario/actualizar', 'App\Controllers\Admin\InventoryCon
 $router->post('admin/inventario/umbral', 'App\Controllers\Admin\InventoryController@saveThreshold');
 $router->post('admin/inventario/precios', 'App\Controllers\Admin\InventoryController@bulkPrice');
 $router->post('admin/inventario/stock', 'App\Controllers\Admin\InventoryController@bulkStock');
+$router->get('admin/cotizaciones', 'App\Controllers\Admin\QuoteController@index');
+$router->get('admin/cotizaciones/crear', 'App\Controllers\Admin\QuoteController@create');
+$router->post('admin/cotizaciones/guardar', 'App\Controllers\Admin\QuoteController@store');
+$router->get('admin/cotizaciones/editar/{id}', 'App\Controllers\Admin\QuoteController@edit');
+$router->post('admin/cotizaciones/actualizar/{id}', 'App\Controllers\Admin\QuoteController@update');
+$router->post('admin/cotizaciones/estado/{id}', 'App\Controllers\Admin\QuoteController@updateStatus');
+$router->post('admin/cotizaciones/enviar/{id}', 'App\Controllers\Admin\QuoteController@send');
+$router->get('admin/cotizaciones/pdf/{id}', 'App\Controllers\Admin\QuoteController@pdf');
+$router->post('admin/cotizaciones/eliminar/{id}', 'App\Controllers\Admin\QuoteController@delete');
+$router->get('admin/cotizaciones/{id}', 'App\Controllers\Admin\QuoteController@show');
 
 // Modo mantención: muestra "próximamente" en todas las rutas públicas (admin sigue accesible).
 $maintenancePath = trim((string) parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH), '/');

@@ -86,6 +86,7 @@ bautizos, baby shower, matrimonios, cumpleaños, cajas de vino y joyeros.
 | BK-602 | P1 | Hecho | Página corporativa / "Regalos corporativos" | Contenido institucional y de servicios B2B |
 | BK-603 | P2 | Por hacer | Enlace WhatsApp flotante | Chat directo desde el sitio |
 | BK-604 | P2 | Por hacer | Páginas legales (términos, privacidad, cambios y devoluciones) | Páginas publicadas |
+| BK-605 | P0 | Hecho | Cotizador (propuestas a clientes empresa) solo admin | Crear/editar/enviar cotizaciones con datos de empresa (RUT, dirección, correo, teléfono, atención), líneas de producto con precio unitario neto editable, subtotal/IVA/bruto, indicaciones, estados y PDF descargable |
 
 ## 7. Despliegue y puesta en marcha
 

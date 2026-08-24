@@ -100,6 +100,13 @@ class Product extends Model
         )->fetchAll();
     }
 
+    public static function forSelect(): array
+    {
+        return static::db()->query(
+            'SELECT id, name, sku, price FROM products ORDER BY name ASC'
+        )->fetchAll();
+    }
+
     public static function applyPricePercent(float $percent, ?int $categoryId = null): int
     {
         $factor = 1 + ($percent / 100);
