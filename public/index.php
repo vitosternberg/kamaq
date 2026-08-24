@@ -131,6 +131,7 @@ $router->post('admin/cotizaciones/estado/{id}', 'App\Controllers\Admin\QuoteCont
 $router->post('admin/cotizaciones/enviar/{id}', 'App\Controllers\Admin\QuoteController@send');
 $router->get('admin/cotizaciones/pdf/{id}', 'App\Controllers\Admin\QuoteController@pdf');
 $router->post('admin/cotizaciones/eliminar/{id}', 'App\Controllers\Admin\QuoteController@delete');
+$router->get('admin/cotizaciones/cliente', 'App\Controllers\Admin\QuoteController@clienteLookup');
 $router->get('admin/cotizaciones/{id}', 'App\Controllers\Admin\QuoteController@show');
 
 // Modo mantención: muestra "próximamente" en todas las rutas públicas (admin sigue accesible).

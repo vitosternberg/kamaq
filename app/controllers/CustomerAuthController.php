@@ -6,6 +6,7 @@ use App\Core\Cart;
 use App\Core\Controller;
 use App\Core\CustomerAuth;
 use App\Models\CustomerAccount;
+use App\Models\Company;
 
 class CustomerAuthController extends Controller
 {
@@ -30,8 +31,16 @@ class CustomerAuthController extends Controller
             redirect('cuenta/registro');
         }
 
+        $type = ($_POST['customer_type'] ?? 'persona_natural') === 'empresa' ? 'empresa' : 'persona_natural';
         $name = trim($_POST['name'] ?? '');
+        $lastname = trim($_POST['lastname'] ?? '');
+        $rut = normalize_rut($_POST['rut'] ?? '');
         $email = trim($_POST['email'] ?? '');
+        $companyName = trim($_POST['company_name'] ?? '');
+        $companyRut = normalize_rut($_POST['company_rut'] ?? '');
+        $companyAddress = trim($_POST['company_address'] ?? '');
+        $companyEmail = trim($_POST['company_email'] ?? '');
+        $companyPhone = trim($_POST['company_phone'] ?? '');
         $password = (string) ($_POST['password'] ?? '');
         $region = trim($_POST['region'] ?? '');
         $city = trim($_POST['city'] ?? '');
@@ -40,14 +49,33 @@ class CustomerAuthController extends Controller
         if ($name === '') {
             $errors[] = 'El nombre es obligatorio.';
         }
+        if ($lastname === '') {
+            $errors[] = 'El apellido es obligatorio.';
+        }
+        if ($rut !== '' && !valid_rut($rut)) {
+            $errors[] = 'Ingresa un RUT válido.';
+        } elseif ($rut !== '' && CustomerAccount::rutExists($rut)) {
+            $errors[] = 'Ya existe una cuenta con ese RUT.';
+        }
+        if ($type === 'empresa') {
+            if ($companyName === '') {
+                $errors[] = 'La razón social es obligatoria.';
+            }
+            if ($companyRut === '' || !valid_rut($companyRut)) {
+                $errors[] = 'Ingresa un RUT de empresa válido.';
+            } elseif (Company::rutExists($companyRut)) {
+                $errors[] = 'Ya existe una empresa con ese RUT.';
+            }
+        } else {
+            if (!in_array($region, chile_regions(), true)) {
+                $errors[] = 'Selecciona tu región.';
+            }
+        }
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $errors[] = 'Ingresa un correo válido.';
         }
         if (strlen($password) < 6) {
             $errors[] = 'La contraseña debe tener al menos 6 caracteres.';
-        }
-        if (!in_array($region, chile_regions(), true)) {
-            $errors[] = 'Selecciona tu región.';
         }
         if (CustomerAccount::emailExists($email)) {
             $errors[] = 'Ya existe una cuenta con ese correo.';
@@ -60,8 +88,20 @@ class CustomerAuthController extends Controller
         }
 
         $verifyToken = bin2hex(random_bytes(32));
+        $companyId = null;
+        if ($type === 'empresa') {
+            $companyId = Company::create([
+                'rut' => $companyRut,
+                'razon_social' => $companyName,
+                'address' => $companyAddress !== '' ? $companyAddress : null,
+                'email' => $companyEmail !== '' ? $companyEmail : null,
+                'phone' => $companyPhone !== '' ? $companyPhone : null,
+            ]);
+        }
         CustomerAccount::create([
-            'name' => $name,
+            'name' => trim($name . ' ' . $lastname),
+            'rut' => $rut !== '' ? $rut : null,
+            'company_id' => $companyId,
             'email' => $email,
             'password_hash' => password_hash($password, PASSWORD_DEFAULT),
             'phone' => trim($_POST['phone'] ?? ''),
@@ -77,7 +117,7 @@ class CustomerAuthController extends Controller
         send_mail(
             $email,
             'Verifica tu cuenta en KAMAQ',
-            "Hola {$name},\n\nConfirma tu correo abriendo este enlace:\n{$link}\n\nSi no creaste esta cuenta, ignora este mensaje."
+            "Hola " . trim($name . ' ' . $lastname) . ",\n\nConfirma tu correo abriendo este enlace:\n{$link}\n\nSi no creaste esta cuenta, ignora este mensaje."
         );
 
         flash('success', 'Te enviamos un correo para verificar tu cuenta. Revisa tu bandeja.');

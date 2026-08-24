@@ -73,9 +73,24 @@ CREATE TABLE IF NOT EXISTS users (
   UNIQUE KEY uq_users_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS companies (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  rut VARCHAR(20) NOT NULL,
+  razon_social VARCHAR(160) NOT NULL,
+  address VARCHAR(255) NULL,
+  email VARCHAR(160) NULL,
+  phone VARCHAR(40) NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_companies_rut (rut)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS customers (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   name VARCHAR(160) NOT NULL,
+  rut VARCHAR(20) NULL,
+  company_id INT UNSIGNED NULL,
   email VARCHAR(160) NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   phone VARCHAR(40) NULL,
@@ -91,8 +106,11 @@ CREATE TABLE IF NOT EXISTS customers (
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
   UNIQUE KEY uq_customers_email (email),
+  UNIQUE KEY uq_customers_rut (rut),
+  KEY idx_customers_company (company_id),
   KEY idx_customers_verify_token (verify_token),
-  KEY idx_customers_reset_token (reset_token)
+  KEY idx_customers_reset_token (reset_token),
+  CONSTRAINT fk_customers_company FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS orders (

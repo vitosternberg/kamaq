@@ -24,10 +24,14 @@ foreach ($products as $p) {
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
       <div class="form-group">
         <label>RUT</label>
-        <input type="text" name="customer_rut" class="form-control" value="<?= e(old('customer_rut', $quote['customer_rut'] ?? '')) ?>">
+        <div style="display:flex; gap:8px;">
+          <input type="text" name="customer_rut" id="customer-rut" class="form-control" style="flex:1;" value="<?= e(old('customer_rut', $quote['customer_rut'] ?? '')) ?>">
+          <button type="button" class="btn btn--outline" id="rut-lookup">Buscar</button>
+        </div>
+        <div class="form-hint" id="rut-hint" style="display:none;"></div>
       </div>
       <div class="form-group">
-        <label>Empresa *</label>
+        <label id="company-label">Razón social / Nombre *</label>
         <input type="text" name="customer_company" class="form-control" value="<?= e(old('customer_company', $quote['customer_company'] ?? '')) ?>" required>
       </div>
       <div class="form-group">
@@ -176,5 +180,53 @@ foreach ($products as $p) {
 
   taxRateEl.addEventListener('input', recalc);
   recalc();
+})();
+</script>
+
+<script>
+(function () {
+  var rutInput = document.getElementById('customer-rut');
+  var lookupBtn = document.getElementById('rut-lookup');
+  var hint = document.getElementById('rut-hint');
+  if (!rutInput || !lookupBtn) { return; }
+
+  function set(name, value) {
+    var el = document.querySelector('[name="' + name + '"]');
+    if (el && value !== undefined && value !== null && value !== '') { el.value = value; }
+  }
+
+  lookupBtn.addEventListener('click', function () {
+    var rut = rutInput.value.trim();
+    if (!rut) { return; }
+    lookupBtn.disabled = true;
+    hint.style.display = 'none';
+    fetch('<?= url('admin/cotizaciones/cliente') ?>?rut=' + encodeURIComponent(rut), {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.found) {
+          hint.textContent = 'No se encontró un cliente registrado con ese RUT.';
+          hint.style.display = '';
+          return;
+        }
+        set('customer_company', data.company);
+        set('customer_address', data.address);
+        set('customer_email', data.email);
+        set('customer_phone', data.phone);
+        set('contact_person', data.contact_person);
+        var label = document.getElementById('company-label');
+        if (label) { label.textContent = data.type === 'empresa' ? 'Razón social *' : 'Nombre *'; }
+        hint.textContent = 'Datos cargados (' + (data.type === 'empresa' ? 'empresa' : 'persona natural') + '). Puedes editarlos.';
+        hint.style.display = '';
+      })
+      .catch(function () {
+        hint.textContent = 'Error al buscar el RUT.';
+        hint.style.display = '';
+      })
+      .finally(function () {
+        lookupBtn.disabled = false;
+      });
+  });
 })();
 </script>

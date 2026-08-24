@@ -36,9 +36,31 @@ class CustomerAccount extends Model
     public static function findByResetToken(string $token): ?array
     {
         $stmt = static::db()->prepare(
-            'SELECT * FROM customers WHERE reset_token = ? AND reset_token_expires > NOW() LIMIT 1'
+            'SELECT * FROM customers WHERE reset_token = ? LIMIT 1'
         );
         $stmt->execute([$token]);
+        $row = $stmt->fetch();
+        return $row === false ? null : $row;
+    }
+
+    public static function findByRut(string $rut): ?array
+    {
+        $stmt = static::db()->prepare('SELECT * FROM customers WHERE rut = ? LIMIT 1');
+        $stmt->execute([$rut]);
+        $row = $stmt->fetch();
+        return $row === false ? null : $row;
+    }
+
+    public static function rutExists(string $rut): bool
+    {
+        return static::findByRut($rut) !== null;
+    }
+
+    // Primer representante (persona) vinculado a una empresa.
+    public static function findByCompany(int $companyId): ?array
+    {
+        $stmt = static::db()->prepare('SELECT * FROM customers WHERE company_id = ? LIMIT 1');
+        $stmt->execute([$companyId]);
         $row = $stmt->fetch();
         return $row === false ? null : $row;
     }

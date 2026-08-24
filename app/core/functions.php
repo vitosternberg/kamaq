@@ -195,3 +195,29 @@ function is_rm_region(string $region): bool
 {
     return $region === 'Metropolitana de Santiago';
 }
+
+// Normaliza un RUT chileno: mayúsculas, sin puntos/guiones/españos.
+function normalize_rut(string $rut): string
+{
+    return strtoupper(preg_replace('/[^0-9K]/', '', trim($rut)) ?? '');
+}
+
+// Valida un RUT chileno (cuerpo + dígito verificador).
+function valid_rut(string $rut): bool
+{
+    $rut = normalize_rut($rut);
+    if (!preg_match('/^[0-9]{7,8}[0-9K]$/', $rut)) {
+        return false;
+    }
+    $body = substr($rut, 0, -1);
+    $dv = substr($rut, -1);
+    $sum = 0;
+    $mul = 2;
+    for ($i = strlen($body) - 1; $i >= 0; $i--) {
+        $sum += (int) $body[$i] * $mul;
+        $mul = $mul === 7 ? 2 : $mul + 1;
+    }
+    $expected = 11 - ($sum % 11);
+    $expected = $expected === 11 ? '0' : ($expected === 10 ? 'K' : (string) $expected);
+    return $dv === $expected;
+}

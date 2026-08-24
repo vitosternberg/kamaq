@@ -8,6 +8,8 @@ use App\Core\QuotePdf;
 use App\Models\Product;
 use App\Models\Quote;
 use App\Models\QuoteItem;
+use App\Models\Company;
+use App\Models\CustomerAccount;
 
 class QuoteController extends Controller
 {
@@ -28,6 +30,50 @@ class QuoteController extends Controller
             'quote' => null,
             'products' => Product::forSelect(),
         ], 'admin');
+    }
+
+    public function clienteLookup(): void
+    {
+        Auth::requireLogin();
+        header('Content-Type: application/json; charset=utf-8');
+        $rut = normalize_rut($_GET['rut'] ?? '');
+        if ($rut === '') {
+            echo json_encode(['found' => false]);
+            return;
+        }
+
+        $company = Company::findByRut($rut);
+        if ($company) {
+            $rep = CustomerAccount::findByCompany((int) $company['id']);
+            echo json_encode([
+                'found' => true,
+                'type' => 'empresa',
+                'company' => $company['razon_social'],
+                'rut' => $company['rut'],
+                'address' => $company['address'] ?? '',
+                'phone' => $company['phone'] ?? '',
+                'email' => $rep['email'] ?? ($company['email'] ?? ''),
+                'contact_person' => $rep['name'] ?? '',
+            ]);
+            return;
+        }
+
+        $person = CustomerAccount::findByRut($rut);
+        if ($person) {
+            echo json_encode([
+                'found' => true,
+                'type' => 'persona_natural',
+                'company' => $person['name'],
+                'rut' => $person['rut'] ?? '',
+                'address' => $person['address'] ?? '',
+                'phone' => $person['phone'] ?? '',
+                'email' => $person['email'],
+                'contact_person' => '',
+            ]);
+            return;
+        }
+
+        echo json_encode(['found' => false]);
     }
 
     public function store(): void
