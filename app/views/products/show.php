@@ -41,9 +41,12 @@ $mainImage = !empty($images) ? $images[0]['filename'] : null;
       <input type="hidden" name="product_id" value="<?= (int) $product['id'] ?>">
       <div class="form-group" style="max-width:120px;">
         <label>Cantidad</label>
-        <input type="number" name="quantity" class="form-control" value="1" min="1">
+        <input type="number" name="quantity" class="form-control" value="1" min="1" max="<?= (int) $product['stock'] ?>">
       </div>
-      <button type="submit" class="btn btn--primary">Agregar al carrito</button>
+      <?php if ((int) $product['stock'] <= 0): ?>
+        <p style="color:var(--muted);">Sin stock disponible.</p>
+      <?php endif; ?>
+      <button type="submit" class="btn btn--primary" <?= ((int) $product['stock'] <= 0) ? 'disabled' : '' ?>>Agregar al carrito</button>
     </form>
 
     <?php if (!empty($product['description'])): ?>

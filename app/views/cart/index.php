@@ -19,7 +19,7 @@
           <form method="post" action="<?= url('carrito/actualizar') ?>" style="display:flex; gap:6px;">
             <?= csrf_field() ?>
             <input type="hidden" name="product_id" value="<?= (int) $p['id'] ?>">
-            <input type="number" name="quantity" value="<?= (int) $item['quantity'] ?>" min="1" class="qty-input">
+            <input type="number" name="quantity" value="<?= (int) $item['quantity'] ?>" min="1" max="<?= (int) $p['stock'] ?>" class="qty-input">
             <button class="btn btn--outline btn--sm" type="submit">Actualizar</button>
           </form>
         </td>
@@ -44,4 +44,16 @@
   </div>
 <?php else: ?>
   <p>Tu carrito está vacío. <a href="<?= url('catalogo') ?>">Ver catálogo</a></p>
+<?php endif; ?>
+
+<?php if (!empty($items)): ?>
+<script>
+(function () {
+  document.querySelectorAll('.qty-input').forEach(function (input) {
+    input.addEventListener('change', function () {
+      this.closest('form').submit();
+    });
+  });
+})();
+</script>
 <?php endif; ?>

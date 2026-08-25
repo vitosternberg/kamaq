@@ -75,19 +75,36 @@ class Cart
     public static function add(int $productId, int $quantity): void
     {
         $cart = self::all();
-        $cart[$productId] = ($cart[$productId] ?? 0) + max(1, $quantity);
+        $stock = self::stockOf($productId);
+        if ($stock <= 0) {
+            return;
+        }
+        $current = (int) ($cart[$productId] ?? 0);
+        $cart[$productId] = min($current + max(1, $quantity), $stock);
         $_SESSION['cart'] = $cart;
     }
 
     public static function update(int $productId, int $quantity): void
     {
         $cart = self::all();
-        if ($quantity <= 0) {
+        $stock = self::stockOf($productId);
+        if ($quantity <= 0 || $stock <= 0) {
             unset($cart[$productId]);
         } elseif (isset($cart[$productId])) {
-            $cart[$productId] = max(1, $quantity);
+            $cart[$productId] = min(max(1, $quantity), $stock);
         }
         $_SESSION['cart'] = $cart;
+    }
+
+    public static function quantityOf(int $productId): int
+    {
+        return (int) (self::all()[$productId] ?? 0);
+    }
+
+    private static function stockOf(int $productId): int
+    {
+        $product = Product::find($productId);
+        return $product ? max(0, (int) $product['stock']) : 0;
     }
 
     public static function remove(int $productId): void

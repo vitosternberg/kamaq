@@ -31,12 +31,21 @@ class CartController extends Controller
         }
         $productId = (int) ($_POST['product_id'] ?? 0);
         $quantity = (int) ($_POST['quantity'] ?? 1);
-        if (!Product::find($productId)) {
+        $product = Product::find($productId);
+        if (!$product) {
             flash('error', 'Producto no encontrado.');
             redirect('carrito');
         }
+        $stock = (int) $product['stock'];
+        if ($stock <= 0) {
+            flash('error', 'Este producto no tiene stock disponible.');
+            redirect('producto/' . $product['slug']);
+        }
+        $inCart = Cart::quantityOf($productId);
         Cart::add($productId, $quantity);
-        flash('success', 'Producto agregado al carrito.');
+        flash('success', $inCart + $quantity > $stock
+            ? 'Producto agregado al carrito (stock máximo: ' . $stock . ').'
+            : 'Producto agregado al carrito.');
         redirect('carrito');
     }
 
@@ -46,7 +55,13 @@ class CartController extends Controller
             flash('error', 'Sesión inválida.');
             redirect('carrito');
         }
-        Cart::update((int) ($_POST['product_id'] ?? 0), (int) ($_POST['quantity'] ?? 1));
+        $productId = (int) ($_POST['product_id'] ?? 0);
+        $quantity = (int) ($_POST['quantity'] ?? 1);
+        $product = Product::find($productId);
+        Cart::update($productId, $quantity);
+        if ($product && $quantity > (int) $product['stock']) {
+            flash('success', 'Cantidad ajustada al stock disponible (' . (int) $product['stock'] . ').');
+        }
         redirect('carrito');
     }
 
