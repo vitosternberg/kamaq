@@ -23,14 +23,6 @@
         </select>
       </div>
     </form>
-
-    <h3 style="margin-top:24px;">Categorías</h3>
-    <ul class="catalog-categories">
-      <li><a href="<?= url('catalogo') ?>">Todas</a></li>
-      <?php foreach ($categories as $cat): ?>
-        <li><a href="<?= url('categoria/' . e($cat['slug'])) ?>"><?= e($cat['name']) ?></a></li>
-      <?php endforeach; ?>
-    </ul>
   </aside>
 
   <div class="catalog-main">
