@@ -84,7 +84,7 @@ class ProductController extends Controller
         Product::update($id, $data);
         $this->handleImages($id, $_FILES['images'] ?? null);
         flash('success', 'Producto actualizado.');
-        redirect('/admin/productos');
+        redirect('/admin/productos/editar/' . $id);
     }
 
     public function delete(int $id): void
