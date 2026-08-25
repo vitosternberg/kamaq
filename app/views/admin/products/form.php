@@ -72,6 +72,26 @@
     </div>
     <p class="form-hint" style="margin-top:4px;">Al ingresar costo y % ganancia, el precio neto se calcula automáticamente: costo × (1 + %/100).</p>
 
+    <h3 style="margin:20px 0 8px;">Medidas y peso (para envío)</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:14px;">
+      <div class="form-group">
+        <label>Peso (kg)</label>
+        <input type="number" step="0.001" min="0" name="weight" class="form-control" value="<?= e($product['weight'] ?? '') ?>" placeholder="Ej: 1.000">
+      </div>
+      <div class="form-group">
+        <label>Largo (cm)</label>
+        <input type="number" step="0.01" min="0" name="length" class="form-control" value="<?= e($product['length'] ?? '') ?>">
+      </div>
+      <div class="form-group">
+        <label>Ancho (cm)</label>
+        <input type="number" step="0.01" min="0" name="width" class="form-control" value="<?= e($product['width'] ?? '') ?>">
+      </div>
+      <div class="form-group">
+        <label>Alto (cm)</label>
+        <input type="number" step="0.01" min="0" name="height" class="form-control" value="<?= e($product['height'] ?? '') ?>">
+      </div>
+    </div>
+
     <div class="form-check">
       <input type="checkbox" name="is_featured" id="is_featured" <?= (!empty($product['is_featured'])) ? 'checked' : '' ?>>
       <label for="is_featured">Destacado</label>

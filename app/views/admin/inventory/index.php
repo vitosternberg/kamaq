@@ -84,7 +84,7 @@ $statusMeta = [
 
 <div class="card">
   <table class="data">
-    <thead><tr><th>Producto</th><th>SKU</th><th>Stock</th><th>Costo</th><th>% Margen</th><th>Precio neto</th><th>Precio bruto</th><th>Oferta</th><th>Impuesto</th><th>Estado</th><th></th></tr></thead>
+    <thead><tr><th>Producto</th><th>SKU</th><th>Stock</th><th>Costo</th><th>% Margen</th><th>Precio neto</th><th>Precio bruto</th><th>Oferta</th><th>Impuesto</th><th>Peso kg</th><th>Largo cm</th><th>Ancho cm</th><th>Alto cm</th><th>Estado</th><th></th></tr></thead>
     <tbody>
     <?php foreach ($products as $p):
       $meta = $statusMeta[$p['stock_status']] ?? $statusMeta['ok'];
@@ -109,6 +109,10 @@ $statusMeta = [
             <?php endforeach; ?>
           </select>
         </td>
+        <td><input type="number" step="0.001" min="0" name="weight" form="f<?= (int) $p['id'] ?>" class="form-control" value="<?= e($p['weight'] ?? '') ?>" style="max-width:70px;"></td>
+        <td><input type="number" step="0.01" min="0" name="length" form="f<?= (int) $p['id'] ?>" class="form-control" value="<?= e($p['length'] ?? '') ?>" style="max-width:60px;"></td>
+        <td><input type="number" step="0.01" min="0" name="width" form="f<?= (int) $p['id'] ?>" class="form-control" value="<?= e($p['width'] ?? '') ?>" style="max-width:60px;"></td>
+        <td><input type="number" step="0.01" min="0" name="height" form="f<?= (int) $p['id'] ?>" class="form-control" value="<?= e($p['height'] ?? '') ?>" style="max-width:60px;"></td>
         <td><span class="badge badge--<?= e($meta[1]) ?>"><?= e($meta[0]) ?></span></td>
         <td><button class="btn btn--primary btn--sm" type="submit" form="f<?= (int) $p['id'] ?>">Guardar</button></td>
       </tr>
