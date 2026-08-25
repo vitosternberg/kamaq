@@ -129,11 +129,7 @@
           <div class="image-item">
             <img src="<?= e(upload('products/' . $img['filename'])) ?>" alt="" class="<?= $img['is_primary'] ? 'primary' : '' ?>">
             <div class="label"><?= $img['is_primary'] ? 'Principal' : '' ?></div>
-            <form method="post" action="<?= url('admin/productos/imagen/eliminar/' . (int) $img['id']) ?>" onsubmit="return confirm('¿Eliminar esta imagen?');">
-              <?= csrf_field() ?>
-              <input type="hidden" name="product_id" value="<?= (int) $product['id'] ?>">
-              <button class="btn btn--danger btn--sm" type="submit" style="margin-top:4px;">Quitar</button>
-            </form>
+            <button class="btn btn--danger btn--sm" type="submit" form="imgdel-<?= (int) $img['id'] ?>" style="margin-top:4px;">Quitar</button>
           </div>
         <?php endforeach; ?>
       </div>
@@ -141,6 +137,15 @@
 
     <button class="btn btn--primary" type="submit" style="margin-top:16px;">Guardar</button>
   </form>
+
+  <?php if ($isEdit): ?>
+    <?php foreach ($images as $img): ?>
+      <form method="post" action="<?= url('admin/productos/imagen/eliminar/' . (int) $img['id']) ?>" id="imgdel-<?= (int) $img['id'] ?>" onsubmit="return confirm('¿Eliminar esta imagen?');" style="display:none;">
+        <?= csrf_field() ?>
+        <input type="hidden" name="product_id" value="<?= (int) $product['id'] ?>">
+      </form>
+    <?php endforeach; ?>
+  <?php endif; ?>
 </div>
 
 <script>
