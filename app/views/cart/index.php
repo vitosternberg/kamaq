@@ -20,7 +20,6 @@
             <?= csrf_field() ?>
             <input type="hidden" name="product_id" value="<?= (int) $p['id'] ?>">
             <input type="number" name="quantity" value="<?= (int) $item['quantity'] ?>" min="1" max="<?= (int) $p['stock'] ?>" class="qty-input">
-            <button class="btn btn--outline btn--sm" type="submit">Actualizar</button>
           </form>
         </td>
         <td><?= money($item['subtotal']) ?></td>
