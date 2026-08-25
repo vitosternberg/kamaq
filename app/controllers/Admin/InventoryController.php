@@ -64,10 +64,6 @@ class InventoryController extends Controller
             'cost' => ($_POST['cost'] ?? '') !== '' ? (float) ($_POST['cost'] ?? 0) : null,
             'margin_percent' => ($_POST['margin_percent'] ?? '') !== '' ? (float) ($_POST['margin_percent'] ?? 0) : null,
             'tax_id' => ((int) ($_POST['tax_id'] ?? 0)) ?: null,
-            'weight' => ($_POST['weight'] ?? '') !== '' ? (float) ($_POST['weight'] ?? 0) : null,
-            'length' => ($_POST['length'] ?? '') !== '' ? (float) ($_POST['length'] ?? 0) : null,
-            'width' => ($_POST['width'] ?? '') !== '' ? (float) ($_POST['width'] ?? 0) : null,
-            'height' => ($_POST['height'] ?? '') !== '' ? (float) ($_POST['height'] ?? 0) : null,
         ]);
         flash('success', 'Producto actualizado.');
         redirect('/admin/inventario');
