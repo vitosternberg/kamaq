@@ -62,6 +62,7 @@ $router->get('buscar', 'App\Controllers\CatalogController@search');
 $router->get('categoria/{slug}', 'App\Controllers\CatalogController@category');
 $router->get('producto/{slug}', 'App\Controllers\CatalogController@show');
 $router->get('carrito', 'App\Controllers\CartController@index');
+$router->post('whatsapp/guardar', 'App\Controllers\WhatsappController@store');
 $router->post('carrito/agregar', 'App\Controllers\CartController@add');
 $router->post('carrito/actualizar', 'App\Controllers\CartController@update');
 $router->post('carrito/quitar', 'App\Controllers\CartController@remove');

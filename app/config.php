@@ -18,6 +18,7 @@ $config = [
     'currency_symbol' => '$',
     'currency_decimals' => 0,
     'contact_email' => 'contacto@kamaq.cl',
+    'whatsapp' => '56932080779', // WhatsApp (con código país, para wa.me)
     'ga_ads_id' => 'AW-18397361572', // Google Ads (gtag.js)
     'ga_ads_conversion_id' => 'AW-18397361572/sU7OCKPp7-McEKTrxcRE', // Conversión: Compra
 ];

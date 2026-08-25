@@ -591,6 +591,64 @@ textarea.form-control { min-height: 120px; }
 .footer-links a:hover { color: #fff; }
 .footer-copy { margin: 0; color: #9a9a9a; font-size: 14px; }
 
+/* Botón flotante de WhatsApp */
+.wsp-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9990;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 0;
+  background: #25d366;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,.25);
+  transition: transform .15s, background .15s;
+}
+.wsp-fab:hover { background: #1ebe5b; transform: scale(1.06); }
+
+/* Modal de WhatsApp */
+.wsp-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  z-index: 9991;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.wsp-modal[hidden] { display: none; }
+.wsp-modal__box {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 18px 40px rgba(0,0,0,.25);
+}
+.wsp-modal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.wsp-modal__head h3 { margin: 0; font-size: 18px; }
+.wsp-modal__close {
+  border: 0;
+  background: none;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--muted);
+}
+.wsp-modal__close:hover { color: var(--text); }
+
 @media (max-width: 768px) {
   .header-main { flex-wrap: wrap; gap: 12px; }
   .cart-link { margin-left: auto; }

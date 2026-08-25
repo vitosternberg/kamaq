@@ -64,6 +64,7 @@ $adsId = (string) config('ga_ads_id', '');
   <?= $content ?>
 </main>
 <?php include BASE_PATH . '/app/views/layout/footer.php'; ?>
+<?php include BASE_PATH . '/app/views/partials/whatsapp_floating.php'; ?>
 <script src="<?= asset('js/main.js') ?>"></script>
 </body>
 </html>
