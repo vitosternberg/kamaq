@@ -107,6 +107,12 @@ class Product extends Model
         )->fetchAll();
     }
 
+    // SKU auto-generado desde el id auto-incremental: SKU-000123
+    public static function generateSku(int $id): string
+    {
+        return 'SKU-' . str_pad((string) $id, 6, '0', STR_PAD_LEFT);
+    }
+
     public static function applyPricePercent(float $percent, ?int $categoryId = null): int
     {
         $factor = 1 + ($percent / 100);

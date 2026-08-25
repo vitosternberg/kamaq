@@ -49,6 +49,7 @@ class ProductController extends Controller
         $data = $this->dataFromRequest();
         $data['slug'] = $this->uniqueSlug($data['slug'], null);
         $id = Product::create($data);
+        Product::update($id, ['sku' => Product::generateSku($id)]);
         $this->handleImages($id, $_FILES['images'] ?? null);
         flash('success', 'Producto creado.');
         redirect('/admin/productos');
@@ -155,7 +156,6 @@ class ProductController extends Controller
         return [
             'name' => $name,
             'slug' => $slug !== '' ? $slug : slugify($name),
-            'sku' => trim($_POST['sku'] ?? ''),
             'category_id' => ((int) ($_POST['category_id'] ?? 0)) ?: null,
             'short_description' => trim($_POST['short_description'] ?? ''),
             'description' => trim($_POST['description'] ?? ''),

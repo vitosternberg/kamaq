@@ -17,10 +17,13 @@
       <input type="text" name="slug" class="form-control" value="<?= e($product['slug'] ?? '') ?>">
       <div class="form-hint">Se genera automáticamente si lo dejas vacío.</div>
     </div>
-    <div class="form-group">
-      <label>SKU</label>
-      <input type="text" name="sku" class="form-control" value="<?= e($product['sku'] ?? '') ?>">
-    </div>
+    <?php if ($product && !empty($product['sku'])): ?>
+      <div class="form-group">
+        <label>SKU</label>
+        <input type="text" class="form-control" value="<?= e($product['sku']) ?>" readonly>
+        <div class="form-hint">Se genera automáticamente y no es editable.</div>
+      </div>
+    <?php endif; ?>
     <div class="form-group">
       <label>Categoría</label>
       <select name="category_id" class="form-control">
