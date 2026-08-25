@@ -63,7 +63,7 @@ img { max-width: 100%; display: block; }
   border: 1px solid var(--border);
   border-radius: 8px;
   background: #f6f4ef;
-  overflow: hidden;
+  position: relative;
   transition: border-color .15s, box-shadow .15s, background .15s;
 }
 .header-search:focus-within {
@@ -93,6 +93,35 @@ img { max-width: 100%; display: block; }
   cursor: pointer;
 }
 .header-search button:hover { background: var(--brand-dark); }
+.search-suggestions {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 12px 28px rgba(0,0,0,.12);
+  overflow: hidden;
+  display: none;
+  z-index: 100;
+}
+.search-suggestions.is-open { display: block; }
+.search-suggestions a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  color: var(--text);
+  font-size: 14px;
+  text-decoration: none;
+  border-bottom: 1px solid #f0ede6;
+}
+.search-suggestions a:last-child { border-bottom: 0; }
+.search-suggestions a:hover { background: var(--bg); }
+.search-suggestions .ss-name { font-weight: 500; }
+.search-suggestions .ss-price { color: var(--brand); font-weight: 600; white-space: nowrap; }
 .cart-link {
   display: flex;
   align-items: center;
@@ -462,6 +491,40 @@ main { padding: 28px 0 56px; }
 .product-card__price { font-weight: 700; color: var(--brand); font-size: 17px; }
 .product-card__old { text-decoration: line-through; color: var(--muted); font-size: 14px; font-weight: 400; margin-left: 8px; }
 
+/* Catálogo con barra lateral */
+.catalog-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+.catalog-sidebar {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+.catalog-sidebar h3 { margin: 0 0 12px; font-size: 16px; }
+.catalog-sidebar .form-group { margin-bottom: 14px; }
+.catalog-categories {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.catalog-categories a {
+  display: block;
+  padding: 8px 10px;
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 14px;
+  text-decoration: none;
+}
+.catalog-categories a:hover { background: var(--bg); color: var(--brand); }
+.catalog-main { min-width: 0; }
+
 /* Badges en cards */
 .badge {
   position: absolute;
@@ -552,6 +615,7 @@ textarea.form-control { min-height: 120px; }
   .header-search { order: 3; flex-basis: 100%; max-width: none; height: 42px; }
   .header-nav { overflow-x: auto; }
   .product-detail { grid-template-columns: 1fr; }
+  .catalog-layout { grid-template-columns: 1fr; }
   .hero-slide { min-height: 380px; }
   .hero-slide::after { background: rgba(30, 22, 14, .62); }
   .hero-slide__content { padding: 28px 20px; max-width: 100%; }

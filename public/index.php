@@ -57,6 +57,7 @@ $router = new Router();
 // --- Público ---
 $router->get('', 'App\Controllers\HomeController@index');
 $router->get('catalogo', 'App\Controllers\CatalogController@index');
+$router->get('buscar/sugerencias', 'App\Controllers\CatalogController@suggest');
 $router->get('buscar', 'App\Controllers\CatalogController@search');
 $router->get('categoria/{slug}', 'App\Controllers\CatalogController@category');
 $router->get('producto/{slug}', 'App\Controllers\CatalogController@show');

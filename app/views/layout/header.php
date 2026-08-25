@@ -8,7 +8,7 @@ $serviceCategories = \App\Models\Category::roots();
     <div class="header-main">
       <a class="brand" href="<?= url('') ?>"><?= e(config('app_name', 'KAMAQ')) ?></a>
       <form class="header-search" action="<?= url('buscar') ?>" method="get" role="search">
-        <input type="search" name="q" placeholder="Buscar productos, regalos y más…" aria-label="Buscar" value="<?= e($_GET['q'] ?? '') ?>">
+        <input type="search" name="q" id="search-input" autocomplete="off" placeholder="Buscar productos, regalos y más…" aria-label="Buscar" value="<?= e($_GET['q'] ?? '') ?>" data-suggest="<?= url('buscar/sugerencias') ?>" data-product-base="<?= url('producto') ?>">
         <button type="submit" aria-label="Buscar">
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         </button>

@@ -113,6 +113,37 @@ class Product extends Model
         return 'SKU-' . str_pad((string) $id, 6, '0', STR_PAD_LEFT);
     }
 
+    // Catálogo con filtro por categoría(s) + orden (lista blanca) + paginación.
+    public static function catalog(array $categoryIds, string $orderBy, int $page, int $perPage): array
+    {
+        $offset = ($page - 1) * $perPage;
+        $sql = 'SELECT p.*, ' . self::COVER_SELECT . ' FROM products p WHERE p.is_active = 1';
+        $params = [];
+        if ($categoryIds) {
+            $placeholders = implode(',', array_fill(0, count($categoryIds), '?'));
+            $sql .= ' AND p.category_id IN (' . $placeholders . ')';
+            $params = array_values($categoryIds);
+        }
+        $sql .= ' ORDER BY ' . $orderBy . ' LIMIT ' . (int) $perPage . ' OFFSET ' . (int) $offset;
+        $stmt = static::db()->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
+    public static function catalogCount(array $categoryIds): int
+    {
+        $sql = 'SELECT COUNT(*) FROM products p WHERE p.is_active = 1';
+        $params = [];
+        if ($categoryIds) {
+            $placeholders = implode(',', array_fill(0, count($categoryIds), '?'));
+            $sql .= ' AND p.category_id IN (' . $placeholders . ')';
+            $params = array_values($categoryIds);
+        }
+        $stmt = static::db()->prepare($sql);
+        $stmt->execute($params);
+        return (int) $stmt->fetchColumn();
+    }
+
     public static function applyPricePercent(float $percent, ?int $categoryId = null): int
     {
         $factor = 1 + ($percent / 100);

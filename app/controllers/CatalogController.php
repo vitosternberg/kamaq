@@ -13,14 +13,33 @@ class CatalogController extends Controller
     {
         $perPage = 12;
         $page = max(1, (int) ($_GET['page'] ?? 1));
-        $total = Product::activeCount();
+
+        $orderMap = [
+            'recientes' => 'p.created_at DESC',
+            'precio-asc' => 'p.price ASC',
+            'precio-desc' => 'p.price DESC',
+            'nombre-asc' => 'p.name ASC',
+            'nombre-desc' => 'p.name DESC',
+        ];
+        $orderKey = (string) ($_GET['orden'] ?? 'recientes');
+        $orderBy = $orderMap[$orderKey] ?? $orderMap['recientes'];
+
+        $categoryId = (int) ($_GET['categoria'] ?? 0);
+        $categoryIds = [];
+        if ($categoryId > 0) {
+            $categoryIds = array_merge([$categoryId], array_map(fn ($c) => (int) $c['id'], Category::children($categoryId)));
+        }
+
+        $total = Product::catalogCount($categoryIds);
         $totalPages = max(1, (int) ceil($total / $perPage));
 
         $this->view('products/index', [
             'pageTitle' => 'Catálogo de regalos — KAMAQ',
             'metaDescription' => 'Explora nuestro catálogo de regalos personalizados y mementos para toda ocasión.',
-            'products' => Product::paginate($page, $perPage),
+            'products' => Product::catalog($categoryIds, $orderBy, $page, $perPage),
             'categories' => Category::roots(),
+            'orderKey' => $orderKey,
+            'categoryId' => $categoryId,
             'page' => $page,
             'totalPages' => $totalPages,
             'breadcrumbs' => [
@@ -28,6 +47,28 @@ class CatalogController extends Controller
                 ['label' => 'Catálogo', 'url' => null],
             ],
         ]);
+    }
+
+    public function suggest(): void
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        $q = trim((string) ($_GET['q'] ?? ''));
+        if ($q === '') {
+            echo json_encode([]);
+            return;
+        }
+        $out = [];
+        foreach (Product::search($q, 8) as $p) {
+            $taxId = ($p['tax_id'] ?? null) !== null ? (int) $p['tax_id'] : null;
+            $price = !empty($p['sale_price']) && (float) $p['sale_price'] > 0 ? (float) $p['sale_price'] : (float) $p['price'];
+            $out[] = [
+                'name' => $p['name'],
+                'slug' => $p['slug'],
+                'price' => money(gross_price($price, $taxId)),
+                'cover' => $p['cover'] ?? null,
+            ];
+        }
+        echo json_encode($out);
     }
 
     public function search(): void

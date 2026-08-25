@@ -52,4 +52,60 @@ document.addEventListener('DOMContentLoaded', function () {
       window.setTimeout(function () { f.remove(); }, 500);
     });
   }, 4000);
+
+  // Autocompletado del buscador (sugerencias en vivo)
+  var searchInput = document.getElementById('search-input');
+  if (searchInput) {
+    var searchBox = searchInput.closest('.header-search');
+    var suggestUrl = searchInput.getAttribute('data-suggest');
+    var productBase = searchInput.getAttribute('data-product-base');
+
+    var dropdown = document.createElement('div');
+    dropdown.className = 'search-suggestions';
+    searchBox.appendChild(dropdown);
+
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+
+    var debounce = null;
+    searchInput.addEventListener('input', function () {
+      window.clearTimeout(debounce);
+      var q = searchInput.value.trim();
+      if (q.length < 2) {
+        dropdown.innerHTML = '';
+        dropdown.classList.remove('is-open');
+        return;
+      }
+      debounce = window.setTimeout(function () {
+        fetch(suggestUrl + '?q=' + encodeURIComponent(q), { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+          .then(function (r) { return r.json(); })
+          .then(function (items) {
+            if (!Array.isArray(items) || !items.length) {
+              dropdown.innerHTML = '';
+              dropdown.classList.remove('is-open');
+              return;
+            }
+            dropdown.innerHTML = items.map(function (it) {
+              return '<a href="' + productBase + '/' + esc(it.slug) + '">'
+                + '<span class="ss-name">' + esc(it.name) + '</span>'
+                + '<span class="ss-price">' + esc(it.price) + '</span>'
+                + '</a>';
+            }).join('');
+            dropdown.classList.add('is-open');
+          })
+          .catch(function () {
+            dropdown.classList.remove('is-open');
+          });
+      }, 300);
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!searchBox.contains(e.target)) {
+        dropdown.classList.remove('is-open');
+      }
+    });
+  }
 });
