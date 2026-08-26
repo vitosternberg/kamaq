@@ -112,6 +112,29 @@ class ProductController extends Controller
         redirect('/admin/productos/editar/' . $productId);
     }
 
+    public function setPrimary(int $imageId): void
+    {
+        Auth::requireLogin();
+        if (!csrf_verify($_POST['csrf_token'] ?? null)) {
+            flash('error', 'Sesión inválida.');
+            redirect('/admin/productos');
+        }
+        $image = ProductImage::find($imageId);
+        if (!$image) {
+            flash('error', 'Imagen no encontrada.');
+            redirect('/admin/productos');
+        }
+        $productId = (int) $image['product_id'];
+        foreach (ProductImage::forProduct($productId) as $img) {
+            if ((int) $img['is_primary'] === 1) {
+                ProductImage::update((int) $img['id'], ['is_primary' => 0]);
+            }
+        }
+        ProductImage::update($imageId, ['is_primary' => 1]);
+        flash('success', 'Imagen principal actualizada.');
+        redirect('/admin/productos/editar/' . $productId);
+    }
+
     public function toggleFeatured(int $id): void
     {
         Auth::requireLogin();

@@ -108,6 +108,7 @@ $router->post('admin/productos/eliminar/{id}', 'App\Controllers\Admin\ProductCon
 $router->post('admin/productos/destacado/{id}', 'App\Controllers\Admin\ProductController@toggleFeatured');
 $router->post('admin/productos/superventa/{id}', 'App\Controllers\Admin\ProductController@toggleBestseller');
 $router->post('admin/productos/imagen/eliminar/{id}', 'App\Controllers\Admin\ProductController@deleteImage');
+$router->post('admin/productos/imagen/principal/{id}', 'App\Controllers\Admin\ProductController@setPrimary');
 $router->get('admin/pedidos', 'App\Controllers\Admin\OrderController@index');
 $router->get('admin/pedidos/{id}', 'App\Controllers\Admin\OrderController@show');
 $router->post('admin/pedidos/estado/{id}', 'App\Controllers\Admin\OrderController@updateStatus');

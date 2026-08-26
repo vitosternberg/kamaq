@@ -120,7 +120,7 @@
     <div class="form-group">
       <label>Imágenes</label>
       <input type="file" name="images[]" multiple accept="image/jpeg,image/png,image/webp">
-      <div class="form-hint">JPG, PNG o WebP. La primera imagen se usa como principal.</div>
+      <div class="form-hint">JPG, PNG o WebP. Puedes subir varias a la vez; marca una como "principal" (portada).</div>
     </div>
 
     <?php if (!empty($images)): ?>
@@ -129,6 +129,9 @@
           <div class="image-item">
             <img src="<?= e(upload('products/' . $img['filename'])) ?>" alt="" class="<?= $img['is_primary'] ? 'primary' : '' ?>">
             <div class="label"><?= $img['is_primary'] ? 'Principal' : '' ?></div>
+            <?php if (!$img['is_primary']): ?>
+              <button class="btn btn--outline btn--sm" type="submit" form="imgprimary-<?= (int) $img['id'] ?>" style="margin-top:4px;">Hacer principal</button>
+            <?php endif; ?>
             <button class="btn btn--danger btn--sm" type="submit" form="imgdel-<?= (int) $img['id'] ?>" style="margin-top:4px;">Quitar</button>
           </div>
         <?php endforeach; ?>
@@ -143,6 +146,9 @@
       <form method="post" action="<?= url('admin/productos/imagen/eliminar/' . (int) $img['id']) ?>" id="imgdel-<?= (int) $img['id'] ?>" onsubmit="return confirm('¿Eliminar esta imagen?');" style="display:none;">
         <?= csrf_field() ?>
         <input type="hidden" name="product_id" value="<?= (int) $product['id'] ?>">
+      </form>
+      <form method="post" action="<?= url('admin/productos/imagen/principal/' . (int) $img['id']) ?>" id="imgprimary-<?= (int) $img['id'] ?>" style="display:none;">
+        <?= csrf_field() ?>
       </form>
     <?php endforeach; ?>
   <?php endif; ?>
