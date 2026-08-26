@@ -25,7 +25,7 @@ $oldGross = $hasSale ? gross_price((float) $product['price'], $taxId) : 0.0;
     <h3 class="product-card__title"><a href="<?= $productUrl ?>"><?= e($product['name']) ?></a></h3>
     <div class="product-card__price">
       <?= money($cardGross) ?>
-      <?php if (!empty($product['unit']) && $product['unit'] !== 'unidad'): ?><span style="font-size:12px; color:var(--muted);">/ <?= e(product_unit_label($product['unit'])) ?></span><?php endif; ?>
+      <span style="font-size:12px; color:var(--muted);">/ <?= e(product_unit_label($product['unit'] ?? 'unidad')) ?></span>
       <?php if ($hasSale): ?><span class="product-card__old"><?= money($oldGross) ?></span><?php endif; ?>
     </div>
     <a class="btn btn--primary" href="<?= $productUrl ?>">Ver producto</a>
