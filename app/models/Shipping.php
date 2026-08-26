@@ -19,8 +19,8 @@ class Shipping
     // Regiones por zona (desde Santiago como origen).
     public const ZONE_REGIONS = [
         'naranja' => ['Metropolitana de Santiago'],
-        'celeste' => ['Atacama', 'Coquimbo', 'Valparaíso', "O'Higgins", 'Maule', 'Ñuble', 'Biobío', 'La Araucanía', 'Los Ríos', 'Los Lagos'],
-        'azul'    => ['Arica y Parinacota', 'Tarapacá', 'Antofagasta', 'Aysén', 'Magallanes'],
+        'celeste' => ['Coquimbo', 'Valparaíso', "O'Higgins", 'Maule', 'Ñuble', 'Biobío', 'La Araucanía', 'Los Ríos', 'Los Lagos'],
+        'azul'    => ['Arica y Parinacota', 'Tarapacá', 'Antofagasta', 'Atacama', 'Aysén', 'Magallanes'],
     ];
 
     // Matriz de tarifas: [modalidad][zona][talla] => CLP.
@@ -60,7 +60,7 @@ class Shipping
                 return $zone;
             }
         }
-        return 'celeste'; // por defecto, zona centro
+        return 'azul'; // por defecto, zona extremo (la más cara)
     }
 
     // Opciones de envío (modalidades) para una región y peso.
