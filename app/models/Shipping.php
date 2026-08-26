@@ -55,6 +55,7 @@ class Shipping
     // Zona según región del cliente.
     public static function zoneOf(string $region): string
     {
+        $region = trim($region);
         foreach (self::ZONE_REGIONS as $zone => $regions) {
             if (in_array($region, $regions, true)) {
                 return $zone;
