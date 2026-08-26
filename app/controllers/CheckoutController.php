@@ -23,8 +23,9 @@ class CheckoutController extends Controller
         $customer = CustomerAuth::user();
         $subtotal = Cart::subtotal();
         $tax = Cart::tax();
-        $isRm = !empty($customer['is_rm']);
-        $options = Shipping::options($isRm, $subtotal);
+        $region = (string) ($customer['region'] ?? '');
+        $weight = Cart::weight();
+        $options = Shipping::options($region, $weight);
 
         $this->view('checkout/index', [
             'pageTitle' => 'Finalizar compra — KAMAQ',
@@ -34,6 +35,9 @@ class CheckoutController extends Controller
             'customer' => $customer,
             'shippingOptions' => $options,
             'shipping' => $options ? $options[0]['price'] : 0.0,
+            'weight' => $weight,
+            'tier' => $options ? $options[0]['tier'] : 'XS',
+            'zone' => $options ? $options[0]['zone'] : 'celeste',
             'breadcrumbs' => [
                 ['label' => 'Inicio', 'url' => url('')],
                 ['label' => 'Carrito', 'url' => url('carrito')],
@@ -57,10 +61,11 @@ class CheckoutController extends Controller
 
         $subtotal = Cart::subtotal();
         $tax = Cart::tax();
-        $isRm = !empty($customer['is_rm']);
+        $region = (string) ($customer['region'] ?? '');
+        $weight = Cart::weight();
         $shipKey = (string) ($_POST['shipping_option'] ?? '');
-        $shipping = Shipping::priceFor($shipKey, $isRm, $subtotal);
-        $optionName = $this->optionName($shipKey, $isRm, $subtotal);
+        $shipping = Shipping::priceFor($shipKey, $region, $weight);
+        $optionName = $this->optionName($shipKey, $region, $weight);
         $total = $subtotal + $tax + $shipping;
         $orderNumber = 'KQ-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(4)));
 
@@ -142,14 +147,14 @@ class CheckoutController extends Controller
         ]);
     }
 
-    private function optionName(string $key, bool $isRm, float $subtotal): string
+    private function optionName(string $key, string $region, float $weight): string
     {
-        foreach (Shipping::options($isRm, $subtotal) as $option) {
+        foreach (Shipping::options($region, $weight) as $option) {
             if ($option['key'] === $key) {
                 return $option['name'];
             }
         }
-        $all = Shipping::options($isRm, $subtotal);
+        $all = Shipping::options($region, $weight);
         return $all ? $all[0]['name'] : 'Envío';
     }
 }

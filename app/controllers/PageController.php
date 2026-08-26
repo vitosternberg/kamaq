@@ -4,7 +4,6 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Models\Category;
-use App\Models\Shipping;
 
 class PageController extends Controller
 {
@@ -19,7 +18,6 @@ class PageController extends Controller
     {
         $this->view('pages/shipping', [
             'pageTitle' => 'Política de envío — KAMAQ',
-            'shipping' => Shipping::settings(),
             'breadcrumbs' => [
                 ['label' => 'Inicio', 'url' => url('')],
                 ['label' => 'Política de envío', 'url' => null],

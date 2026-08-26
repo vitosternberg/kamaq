@@ -72,6 +72,18 @@ class Cart
         return $sum;
     }
 
+    // Peso total del carrito en kg (producto sin peso = 1 g).
+    public static function weight(): float
+    {
+        $total = 0.0;
+        foreach (self::items() as $item) {
+            $w = $item['product']['weight'] ?? null;
+            $kg = ($w !== null && $w !== '') ? (float) $w : 0.001;
+            $total += $kg * (int) $item['quantity'];
+        }
+        return $total;
+    }
+
     public static function add(int $productId, int $quantity): void
     {
         $cart = self::all();

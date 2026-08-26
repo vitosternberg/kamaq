@@ -4,7 +4,6 @@ namespace App\Controllers\Admin;
 
 use App\Core\Auth;
 use App\Core\Controller;
-use App\Models\Setting;
 use App\Models\Shipping;
 
 class ShippingController extends Controller
@@ -14,24 +13,11 @@ class ShippingController extends Controller
         Auth::requireLogin();
         $this->view('admin/shipping/index', [
             'pageTitle' => 'Envíos',
-            'shipping' => Shipping::settings(),
+            'modalities' => Shipping::MODALITIES,
+            'zones' => Shipping::ZONES,
+            'tiers' => Shipping::TIERS,
+            'rates' => Shipping::RATES,
+            'zoneRegions' => Shipping::ZONE_REGIONS,
         ], 'admin');
-    }
-
-    public function savePolicy(): void
-    {
-        Auth::requireLogin();
-        if (!csrf_verify($_POST['csrf_token'] ?? null)) {
-            flash('error', 'Sesión inválida.');
-            redirect('/admin/envios');
-        }
-
-        Setting::set('shipping_rm_price', (float) ($_POST['rm_price'] ?? 0));
-        Setting::set('shipping_free_threshold', (float) ($_POST['free_threshold'] ?? 0));
-        Setting::set('shipping_express_price', (float) ($_POST['express_price'] ?? 0));
-        Setting::set('shipping_outside_price', (float) ($_POST['outside_price'] ?? 0));
-
-        flash('success', 'Política de envío actualizada.');
-        redirect('/admin/envios');
     }
 }

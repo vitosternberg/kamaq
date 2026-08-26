@@ -31,6 +31,9 @@
     <?php if (!empty($shippingOptions)): ?>
       <div class="form-group">
         <label>Método de envío</label>
+        <div class="form-hint" style="margin-bottom:8px;">
+          Peso del envío: <?= e(number_format($weight, 3, ',', '.')) ?> kg · Talla <?= e($tier) ?> · <?= e(\App\Models\Shipping::zoneLabel($zone)) ?>
+        </div>
         <?php foreach ($shippingOptions as $i => $o): ?>
           <div>
             <label style="font-weight:400; display:flex; align-items:center; gap:8px;">
