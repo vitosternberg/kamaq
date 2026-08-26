@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS products (
   length DECIMAL(10,2) NULL,
   width DECIMAL(10,2) NULL,
   height DECIMAL(10,2) NULL,
+  unit VARCHAR(20) NOT NULL DEFAULT 'unidad',
   is_active TINYINT(1) NOT NULL DEFAULT 1,
   meta_title VARCHAR(160) NULL,
   meta_description VARCHAR(255) NULL,

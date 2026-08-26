@@ -192,6 +192,7 @@ class ProductController extends Controller
             'length' => ($_POST['length'] ?? '') !== '' ? (float) ($_POST['length'] ?? 0) : null,
             'width' => ($_POST['width'] ?? '') !== '' ? (float) ($_POST['width'] ?? 0) : null,
             'height' => ($_POST['height'] ?? '') !== '' ? (float) ($_POST['height'] ?? 0) : null,
+            'unit' => in_array($_POST['unit'] ?? 'unidad', product_units(), true) ? ($_POST['unit'] ?? 'unidad') : 'unidad',
             'is_featured' => isset($_POST['is_featured']) ? 1 : 0,
             'is_bestseller' => isset($_POST['is_bestseller']) ? 1 : 0,
             'is_active' => isset($_POST['is_active']) ? 1 : 0,

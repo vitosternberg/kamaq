@@ -72,6 +72,14 @@
           <?php endforeach; ?>
         </select>
       </div>
+      <div class="form-group">
+        <label>Unidad de venta</label>
+        <select name="unit" class="form-control">
+          <?php foreach (product_units() as $u): ?>
+            <option value="<?= e($u) ?>" <?= ($product['unit'] ?? 'unidad') === $u ? 'selected' : '' ?>><?= e(product_unit_label($u)) ?></option>
+          <?php endforeach; ?>
+        </select>
+      </div>
     </div>
     <p class="form-hint" style="margin-top:4px;">Al ingresar costo y % ganancia, el precio neto se calcula automáticamente: costo × (1 + %/100).</p>
 

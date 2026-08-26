@@ -30,6 +30,7 @@ $mainImage = !empty($images) ? $images[0]['filename'] : null;
     <h1><?= e($product['name']) ?></h1>
     <div class="product-detail__price">
       <?= money($price) ?>
+      <?php if (!empty($product['unit']) && $product['unit'] !== 'unidad'): ?><span style="font-size:15px; color:var(--muted);">/ <?= e(product_unit_label($product['unit'])) ?></span><?php endif; ?>
       <?php if ($hasSale): ?><span class="product-card__old" style="font-size:18px;"><?= money($oldPrice) ?></span><?php endif; ?>
     </div>
     <?php if (!empty($product['short_description'])): ?>

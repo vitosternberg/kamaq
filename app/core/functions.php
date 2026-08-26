@@ -221,3 +221,22 @@ function valid_rut(string $rut): bool
     $expected = $expected === 11 ? '0' : ($expected === 10 ? 'K' : (string) $expected);
     return $dv === $expected;
 }
+
+// Unidades de venta de un producto.
+function product_units(): array
+{
+    return ['unidad', 'pack', 'gramo', 'kilo', 'hora', 'minuto'];
+}
+
+function product_unit_label(string $unit): string
+{
+    $map = [
+        'unidad' => 'Unidad',
+        'pack' => 'Pack',
+        'gramo' => 'Gramo',
+        'kilo' => 'Kilo',
+        'hora' => 'Hora',
+        'minuto' => 'Minuto',
+    ];
+    return $map[$unit] ?? $unit;
+}
