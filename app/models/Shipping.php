@@ -37,6 +37,27 @@ class Shipping
         ],
     ];
 
+    // Matriz vigente: lee desde settings (admin/envios) y usa RATES como fallback.
+    public static function rates(): array
+    {
+        $stored = Setting::get('shipping_rates', '');
+        $data = ($stored !== '' && $stored !== null) ? json_decode((string) $stored, true) : null;
+        if (!is_array($data)) {
+            return self::RATES;
+        }
+        $merged = self::RATES;
+        foreach (self::MODALITIES as $m) {
+            foreach (self::ZONES as $z) {
+                foreach (self::TIERS as $t) {
+                    if (isset($data[$m][$z][$t]) && is_numeric($data[$m][$z][$t])) {
+                        $merged[$m][$z][$t] = (int) $data[$m][$z][$t];
+                    }
+                }
+            }
+        }
+        return $merged;
+    }
+
     // Talla según peso total en kg.
     public static function tierOf(float $kg): string
     {
@@ -69,18 +90,19 @@ class Shipping
     {
         $zone = self::zoneOf($region);
         $tier = self::tierOf($weightKg);
+        $rates = self::rates();
         return [
             [
                 'key' => 'domicilio',
                 'name' => 'Despacho a domicilio',
-                'price' => (float) self::RATES['domicilio'][$zone][$tier],
+                'price' => (float) $rates['domicilio'][$zone][$tier],
                 'zone' => $zone,
                 'tier' => $tier,
             ],
             [
                 'key' => 'pudo',
                 'name' => 'PUDO (retiro en punto Blue Express / Copec)',
-                'price' => (float) self::RATES['pudo'][$zone][$tier],
+                'price' => (float) $rates['pudo'][$zone][$tier],
                 'zone' => $zone,
                 'tier' => $tier,
             ],

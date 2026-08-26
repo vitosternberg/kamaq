@@ -114,6 +114,7 @@ $router->post('admin/pedidos/estado/{id}', 'App\Controllers\Admin\OrderControlle
 $router->get('admin/clientes', 'App\Controllers\Admin\CustomerController@index');
 $router->get('admin/clientes/{email}', 'App\Controllers\Admin\CustomerController@show');
 $router->get('admin/envios', 'App\Controllers\Admin\ShippingController@index');
+$router->post('admin/envios/guardar', 'App\Controllers\Admin\ShippingController@save');
 $router->get('admin/impuestos', 'App\Controllers\Admin\TaxController@index');
 $router->post('admin/impuestos/guardar', 'App\Controllers\Admin\TaxController@store');
 $router->post('admin/impuestos/actualizar/{id}', 'App\Controllers\Admin\TaxController@update');

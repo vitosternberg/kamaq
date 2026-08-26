@@ -33,7 +33,7 @@
           <tr>
             <td><?= e($t) ?></td>
             <?php foreach (\App\Models\Shipping::ZONES as $z): ?>
-              <td><?= money(\App\Models\Shipping::RATES[$m][$z][$t]) ?></td>
+              <td><?= money(\App\Models\Shipping::rates()[$m][$z][$t]) ?></td>
             <?php endforeach; ?>
           </tr>
         <?php endforeach; ?>
