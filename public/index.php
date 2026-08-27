@@ -93,6 +93,7 @@ $router->get('admin/login', 'App\Controllers\Admin\AuthController@showLogin');
 $router->post('admin/login', 'App\Controllers\Admin\AuthController@login');
 $router->get('admin/logout', 'App\Controllers\Admin\AuthController@logout');
 $router->get('admin', 'App\Controllers\Admin\DashboardController@index');
+$router->post('admin/finanzas/guardar', 'App\Controllers\Admin\DashboardController@saveFinance');
 $router->get('admin/categorias', 'App\Controllers\Admin\CategoryController@index');
 $router->get('admin/categorias/crear', 'App\Controllers\Admin\CategoryController@create');
 $router->post('admin/categorias/guardar', 'App\Controllers\Admin\CategoryController@store');

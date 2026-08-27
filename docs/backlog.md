@@ -126,6 +126,16 @@ bautizos, baby shower, matrimonios, cumpleaños, cajas de vino y joyeros.
 
 ---
 
+## 10. Métricas financieras (dashboard)
+
+| ID | Prioridad | Estado | Tarea | Criterio de aceptación |
+|----|-----------|--------|-------|------------------------|
+| BK-908 | P2 | Por hacer | CAC y LTV (costo de adquisición vs. valor de vida del cliente) | CAC = gasto marketing ÷ clientes nuevos; LTV = ticket promedio × pedidos/cliente × vida útil; comparación CAC vs LTV visible |
+| BK-909 | P2 | Por hacer | Punto de equilibrio (break-even) | Número de ventas mensuales necesarias para cubrir los costos fijos, desde el margen de contribución por pedido |
+| BK-910 | P2 | Por hacer | Valor / costo del propio tiempo | Ingresos ÷ horas trabajadas, para valorizar el tiempo del dueño de forma sostenible |
+
+---
+
 ### Decisiones cerradas
 - **BK-402 / BK-405**: Pago en línea con **PagaAquí (BancoEstado)** en **CLP** (MVP1). Multi-moneda queda para MVP2 (BK-407).
 - **BK-103**: País **Chile**, moneda **CLP** (peso chileno).

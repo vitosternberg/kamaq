@@ -7,6 +7,35 @@
   <div class="stat"><div class="num"><?= (int) $stats['customers'] ?></div><div class="label">Clientes</div></div>
 </div>
 
+<h2>Finanzas (últimos 30 días)</h2>
+<div class="card">
+  <form method="post" action="<?= url('admin/finanzas/guardar') ?>" style="margin-bottom:20px;">
+    <?= csrf_field() ?>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+      <div class="form-group">
+        <label>Gasto en marketing (mes)</label>
+        <input type="number" step="1" min="0" name="marketing" class="form-control" value="<?= (int) $finance['marketing'] ?>">
+      </div>
+      <div class="form-group">
+        <label>Costos fijos (mes)</label>
+        <input type="number" step="1" min="0" name="fixed_costs" class="form-control" value="<?= (int) $finance['fixedCosts'] ?>">
+      </div>
+    </div>
+    <button class="btn btn--primary" type="submit">Guardar</button>
+  </form>
+
+  <div class="stats">
+    <div class="stat"><div class="num"><?= money($finance['revenue']) ?></div><div class="label">Ingresos cobrados</div></div>
+    <div class="stat"><div class="num"><?= money($finance['variableCost']) ?></div><div class="label">Costo variable</div></div>
+    <div class="stat"><div class="num"><?= money($finance['margin']) ?></div><div class="label">Margen bruto</div></div>
+    <div class="stat"><div class="num"><?= $finance['roi'] !== null ? number_format($finance['roi'] * 100, 1, ',', '.') . '%' : '—' ?></div><div class="label">ROI</div></div>
+    <div class="stat"><div class="num"><?= money($finance['cashFlow']) ?></div><div class="label">Flujo de caja</div></div>
+  </div>
+  <?php if ($finance['roi'] === null): ?>
+    <p class="form-hint">Ingresa el gasto en marketing para calcular el ROI.</p>
+  <?php endif; ?>
+</div>
+
 <h2>Hero de inicio (Destacados)</h2>
 <div class="card">
   <?php if (!empty($heroProducts)): ?>
