@@ -141,7 +141,7 @@ class CheckoutController extends Controller
         }
 
         Order::update($orderId, ['transbank_token' => $result['token']]);
-        header('Location: ' . $result['url']);
+        header('Location: ' . $result['url'] . '?token_ws=' . rawurlencode((string) $result['token']));
         exit;
     }
 
