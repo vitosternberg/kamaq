@@ -21,6 +21,13 @@ $config = [
     'whatsapp' => '56932080779', // WhatsApp (con código país, para wa.me)
     'ga_ads_id' => 'AW-18397361572', // Google Ads (gtag.js)
     'ga_ads_conversion_id' => 'AW-18397361572/sU7OCKPp7-McEKTrxcRE', // Conversión: Compra
+
+    // Transbank Webpay Plus (credenciales de INTEGRACIÓN; producción se sobrescribe en config.local.php).
+    'tbk_env' => 'integration',
+    'tbk_api_base' => 'https://webpay3gint.transbank.cl',
+    'tbk_commerce_code' => '597055555532',
+    'tbk_api_key_id' => '597055555532',
+    'tbk_api_key_secret' => '579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C',
 ];
 
 $localFile = __DIR__ . '/config.local.php';

@@ -185,6 +185,7 @@ class ProductController extends Controller
             'price' => (float) ($_POST['price'] ?? 0),
             'sale_price' => $salePrice !== '' ? (float) $salePrice : null,
             'stock' => (int) ($_POST['stock'] ?? 0),
+            'track_stock' => isset($_POST['track_stock']) ? 1 : 0,
             'cost' => ($_POST['cost'] ?? '') !== '' ? (float) ($_POST['cost'] ?? 0) : null,
             'margin_percent' => ($_POST['margin_percent'] ?? '') !== '' ? (float) ($_POST['margin_percent'] ?? 0) : null,
             'tax_id' => ((int) ($_POST['tax_id'] ?? 0)) ?: null,

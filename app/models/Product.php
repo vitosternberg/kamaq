@@ -174,7 +174,13 @@ class Product extends Model
 
     public static function decrementStock(int $productId, int $quantity): void
     {
-        $stmt = static::db()->prepare('UPDATE products SET stock = GREATEST(stock - ?, 0) WHERE id = ?');
+        $stmt = static::db()->prepare('UPDATE products SET stock = GREATEST(stock - ?, 0) WHERE id = ? AND track_stock = 1');
+        $stmt->execute([$quantity, $productId]);
+    }
+
+    public static function incrementStock(int $productId, int $quantity): void
+    {
+        $stmt = static::db()->prepare('UPDATE products SET stock = stock + ? WHERE id = ? AND track_stock = 1');
         $stmt->execute([$quantity, $productId]);
     }
 

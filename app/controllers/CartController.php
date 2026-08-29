@@ -36,14 +36,15 @@ class CartController extends Controller
             flash('error', 'Producto no encontrado.');
             redirect('carrito');
         }
+        $trackStock = (int) ($product['track_stock'] ?? 1);
         $stock = (int) $product['stock'];
-        if ($stock <= 0) {
+        if ($trackStock && $stock <= 0) {
             flash('error', 'Este producto no tiene stock disponible.');
             redirect('producto/' . $product['slug']);
         }
         $inCart = Cart::quantityOf($productId);
         Cart::add($productId, $quantity);
-        flash('success', $inCart + $quantity > $stock
+        flash('success', $trackStock && $inCart + $quantity > $stock
             ? 'Producto agregado al carrito (stock máximo: ' . $stock . ').'
             : 'Producto agregado al carrito.');
         redirect('carrito');
@@ -59,7 +60,8 @@ class CartController extends Controller
         $quantity = (int) ($_POST['quantity'] ?? 1);
         $product = Product::find($productId);
         Cart::update($productId, $quantity);
-        if ($product && $quantity > (int) $product['stock']) {
+        $trackStock = (int) ($product['track_stock'] ?? 1);
+        if ($trackStock && $product && $quantity > (int) $product['stock']) {
             flash('success', 'Cantidad ajustada al stock disponible (' . (int) $product['stock'] . ').');
         }
         redirect('carrito');

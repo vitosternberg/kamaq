@@ -7,7 +7,7 @@ bautizos, baby shower, matrimonios, cumpleaños, cajas de vino y joyeros.
 - **Prioridad**: `P0` imprescindible · `P1` importante · `P2` deseable · `P3` futuro.
 - **Estado**: `Por hacer` · `En progreso` · `Hecho`.
 
-> Decisiones de negocio cerradas: pago en línea con **PagaAquí (BancoEstado)**
+> Decisiones de negocio cerradas: pago en línea con **Transbank Webpay Plus**
 > en **CLP** (MVP1); país **Chile**. Multi-moneda queda para MVP2 (BK-407).
 
 ---
@@ -57,10 +57,10 @@ bautizos, baby shower, matrimonios, cumpleaños, cajas de vino y joyeros.
 | ID | Prioridad | Estado | Tarea | Criterio de aceptación |
 |----|-----------|--------|-------|------------------------|
 | BK-401 | P0 | Hecho | Carrito con sesión (agregar, quitar, actualizar cantidades) | Carrito persistente durante la sesión |
-| BK-402 | P0 | Hecho | **Tipo de pago**: pasarela en línea **PagaAquí (BancoEstado)** en CLP | Decisión de negocio documentada |
+| BK-402 | P0 | Hecho | **Tipo de pago**: pasarela en línea **Transbank Webpay Plus** en CLP | Decisión de negocio documentada |
 | BK-403 | P0 | Hecho | Checkout con datos de envío + resumen del pedido | Pedido se registra con ítems y totales |
 | BK-404 | P1 | Por hacer | Confirmación por correo al cliente y al vendedor | Correo de confirmación enviado |
-| BK-405 | P1 | Por hacer | Integración pasarela **PagaAquí (BancoEstado)** | Pago en línea registrado y validado |
+| BK-405 | P1 | Hecho | Integración pasarela **Transbank Webpay Plus** | Pago en línea implementado y revisado (pendiente deploy + certificación Transbank en producción) |
 | BK-406 | P3 | Por hacer | Costos de envío por región/monto | Cálculo de envío automático |
 | BK-407 | P3 | Por hacer | Soporte multi-moneda (MVP2) | Precios y pago en más de una moneda |
 
@@ -137,11 +137,11 @@ bautizos, baby shower, matrimonios, cumpleaños, cajas de vino y joyeros.
 ---
 
 ### Decisiones cerradas
-- **BK-402 / BK-405**: Pago en línea con **PagaAquí (BancoEstado)** en **CLP** (MVP1). Multi-moneda queda para MVP2 (BK-407).
+- **BK-402 / BK-405**: Pago en línea con **Transbank Webpay Plus** en **CLP** (MVP1). Multi-moneda queda para MVP2 (BK-407).
 - **BK-103**: País **Chile**, moneda **CLP** (peso chileno).
 
 ### Próximos pasos sugeridos (por prioridad)
-1. **BK-405** — Integrar pasarela PagaAquí (requiere credenciales/API del comercio).
+1. **BK-405 (deploy)** — Subir la integración Transbank, correr la migración de `orders` y certificar con Transbank en producción.
 2. **BK-404** — Correos de confirmación al cliente y al vendedor.
 3. **BK-503 / BK-504 / BK-505** — `sitemap.xml`, `robots.txt` y Schema.org `Product`.
 4. **BK-704** — Prueba de flujo completo en hosting (requiere entorno PHP/MySQL).

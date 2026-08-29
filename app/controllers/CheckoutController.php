@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Core\Cart;
 use App\Core\Controller;
 use App\Core\CustomerAuth;
+use App\Core\Transbank;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
@@ -86,6 +87,7 @@ class CheckoutController extends Controller
             $city = (string) ($customer['city'] ?? '');
         }
 
+        $now = date('Y-m-d H:i:s');
         $orderId = Order::create([
             'customer_id' => (int) $customer['id'],
             'order_number' => $orderNumber,
@@ -101,9 +103,11 @@ class CheckoutController extends Controller
             'shipping' => $shipping,
             'shipping_method' => $optionName,
             'total' => $total,
-            'payment_method' => 'pagaaqui',
+            'payment_method' => 'webpay',
             'payment_status' => 'pendiente',
             'status' => 'pendiente',
+            'reserved_at' => $now,
+            'expires_at' => date('Y-m-d H:i:s', time() + 15 * 60),
         ]);
 
         foreach ($items as $item) {
@@ -121,13 +125,68 @@ class CheckoutController extends Controller
             Product::decrementStock((int) $item['product']['id'], (int) $item['quantity']);
         }
 
-        Cart::clear();
-        flash('success', 'Pedido ' . $orderNumber . ' registrado. Te contactaremos para coordinar el pago.');
-        $_SESSION['last_order'] = [
-            'order_number' => $orderNumber,
-            'total' => $total,
-        ];
-        redirect('checkout/gracias');
+        // Reserva confirmada en el carrito; el pago ocurre en Webpay.
+        $result = \App\Core\Transbank::create(
+            $orderNumber,
+            (string) $customer['id'],
+            (int) round((float) $total),
+            absolute_url('transbank/retorno')
+        );
+
+        if ($result === null || !isset($result['url']) || !isset($result['token'])) {
+            Order::update($orderId, ['payment_status' => 'rechazado']);
+            Order::releaseStock($orderId);
+            flash('error', 'No se pudo iniciar el pago. Intenta nuevamente.');
+            redirect('checkout');
+        }
+
+        Order::update($orderId, ['transbank_token' => $result['token']]);
+        header('Location: ' . $result['url']);
+        exit;
+    }
+
+    public function retorno(): void
+    {
+        $token = trim((string) ($_GET['token_ws'] ?? ''));
+        if ($token === '') {
+            flash('error', 'El pago no se completó. Puedes volver a intentarlo.');
+            redirect('checkout');
+        }
+
+        $order = Order::findByToken($token);
+        if ($order === null) {
+            flash('error', 'No encontramos el pedido asociado al pago.');
+            redirect('checkout');
+        }
+
+        if ($order['payment_status'] === 'pagado') {
+            $this->goToThanks($order);
+        }
+
+        $res = \App\Core\Transbank::commit($token);
+        if ($res === null) {
+            flash('error', 'No pudimos confirmar el pago. Intenta nuevamente.');
+            redirect('checkout');
+        }
+
+        $authorized = (int) ($res['response_code'] ?? 1) === 0
+            && ($res['status'] ?? '') === 'AUTHORIZED'
+            && (int) ($res['amount'] ?? 0) === (int) round((float) $order['total']);
+
+        if ($authorized) {
+            Order::markPaid((int) $order['id'], $res);
+            Cart::clear();
+            $_SESSION['last_order'] = [
+                'order_number' => $order['order_number'],
+                'total' => $order['total'],
+            ];
+            $this->goToThanks($order);
+        }
+
+        Order::markRejected((int) $order['id']);
+        Order::releaseStock((int) $order['id']);
+        flash('error', 'El pago fue rechazado. Puedes intentar nuevamente.');
+        redirect('checkout');
     }
 
     public function thanks(): void
@@ -145,6 +204,12 @@ class CheckoutController extends Controller
                 ['label' => 'Gracias', 'url' => null],
             ],
         ]);
+    }
+
+    // Redirige a la vista de gracias usando la lógica de sesión last_order.
+    private function goToThanks(array $order): void
+    {
+        redirect('checkout/gracias');
     }
 
     private function optionName(string $key, string $region, float $weight): string

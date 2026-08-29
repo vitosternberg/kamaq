@@ -116,7 +116,13 @@ class Cart
     private static function stockOf(int $productId): int
     {
         $product = Product::find($productId);
-        return $product ? max(0, (int) $product['stock']) : 0;
+        if (!$product) {
+            return 0;
+        }
+        if ((int) ($product['track_stock'] ?? 1) === 0) {
+            return PHP_INT_MAX; // sin límite de stock
+        }
+        return max(0, (int) $product['stock']);
     }
 
     public static function remove(int $productId): void

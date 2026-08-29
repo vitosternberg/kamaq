@@ -64,6 +64,12 @@
         <input type="number" name="stock" class="form-control" value="<?= (int) ($product['stock'] ?? 0) ?>">
       </div>
       <div class="form-group">
+        <label style="font-weight:normal;">
+          <input type="checkbox" name="track_stock" id="track_stock" <?= ((int) ($product['track_stock'] ?? 1)) ? 'checked' : '' ?>>
+          Controlar stock (desmárcalo para productos bajo pedido / sin stock limitado)
+        </label>
+      </div>
+      <div class="form-group">
         <label>Impuesto</label>
         <select name="tax_id" class="form-control">
           <option value="">— Por defecto —</option>

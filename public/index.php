@@ -69,6 +69,7 @@ $router->post('carrito/quitar', 'App\Controllers\CartController@remove');
 $router->get('checkout', 'App\Controllers\CheckoutController@index');
 $router->post('checkout', 'App\Controllers\CheckoutController@store');
 $router->get('checkout/gracias', 'App\Controllers\CheckoutController@thanks');
+$router->get('transbank/retorno', 'App\Controllers\CheckoutController@retorno');
 $router->get('contacto', 'App\Controllers\ContactController@index');
 $router->post('contacto', 'App\Controllers\ContactController@store');
 $router->get('corporativo', 'App\Controllers\CorporateController@index');
@@ -144,6 +145,13 @@ if (config('maintenance_mode', false) && !str_starts_with($maintenancePath, 'adm
     http_response_code(503);
     include BASE_PATH . '/app/views/maintenance.php';
     exit;
+}
+
+// Barrido lazy de pedidos pendientes no pagados (libera stock de expirados).
+try {
+    \App\Models\Order::expireUnpaid(15, 30);
+} catch (\Throwable $e) {
+    error_log('expireUnpaid: ' . $e->getMessage());
 }
 
 $router->dispatch($_SERVER['REQUEST_METHOD'] ?? 'GET', $_SERVER['REQUEST_URI'] ?? '/');

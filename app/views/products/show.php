@@ -8,6 +8,7 @@ $taxId = ($product['tax_id'] ?? null) !== null ? (int) $product['tax_id'] : null
 $price = gross_price($price, $taxId);
 $oldPrice = $hasSale ? gross_price((float) $product['price'], $taxId) : 0.0;
 $mainImage = !empty($images) ? $images[0]['filename'] : null;
+$trackStock = (int) ($product['track_stock'] ?? 1);
 ?>
 <div class="product-detail">
   <div class="product-gallery">
@@ -42,12 +43,14 @@ $mainImage = !empty($images) ? $images[0]['filename'] : null;
       <input type="hidden" name="product_id" value="<?= (int) $product['id'] ?>">
       <div class="form-group" style="max-width:120px;">
         <label>Cantidad</label>
-        <input type="number" name="quantity" class="form-control" value="1" min="1" max="<?= (int) $product['stock'] ?>">
+        <input type="number" name="quantity" class="form-control" value="1" min="1" <?= $trackStock ? 'max="' . (int) $product['stock'] . '"' : '' ?>>
       </div>
-      <?php if ((int) $product['stock'] <= 0): ?>
+      <?php if ($trackStock && (int) $product['stock'] <= 0): ?>
         <p style="color:var(--muted);">Sin stock disponible.</p>
+      <?php elseif (!$trackStock): ?>
+        <p style="color:var(--muted);">Bajo pedido.</p>
       <?php endif; ?>
-      <button type="submit" class="btn btn--primary" <?= ((int) $product['stock'] <= 0) ? 'disabled' : '' ?>>Agregar al carrito</button>
+      <button type="submit" class="btn btn--primary" <?= ($trackStock && (int) $product['stock'] <= 0) ? 'disabled' : '' ?>>Agregar al carrito</button>
     </form>
 
     <?php if (!empty($product['description'])): ?>
