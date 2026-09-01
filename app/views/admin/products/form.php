@@ -9,11 +9,11 @@
     <?= csrf_field() ?>
 
     <div class="form-group">
-      <label>Nombre <?= help('Nombre visible del producto en la tienda.') ?></label>
+      <label>Nombre</label>
       <input type="text" name="name" class="form-control" value="<?= e($product['name'] ?? '') ?>" required>
     </div>
     <div class="form-group">
-      <label>Slug (URL) <?= help('Fragmento de la URL. Se genera automáticamente si lo dejas vacío.') ?></label>
+      <label>Slug (URL)</label>
       <input type="text" name="slug" class="form-control" value="<?= e($product['slug'] ?? '') ?>">
       <div class="form-hint">Se genera automáticamente si lo dejas vacío.</div>
     </div>
@@ -25,65 +25,46 @@
       </div>
     <?php endif; ?>
     <div class="form-group">
-      <label>Categorías <?= help('El producto puede estar en varias categorías a la vez.') ?></label>
-      <div class="category-checks">
+      <label>Categoría</label>
+      <select name="category_id" class="form-control">
+        <option value="">— Sin categoría —</option>
         <?php foreach ($categories as $c): ?>
-          <label class="category-check">
-            <input type="checkbox" name="category_ids[]" value="<?= (int) $c['id'] ?>" <?= in_array((int) $c['id'], $selectedCategories['ids'] ?? [], true) ? 'checked' : '' ?>>
-            <?= str_repeat('— ', (int) ($c['depth'] ?? 0)) . e($c['name']) ?>
-          </label>
-        <?php endforeach; ?>
-      </div>
-      <div class="form-hint">El producto puede estar en varias categorías a la vez.</div>
-    </div>
-    <div class="form-group">
-      <label>Categoría principal <?= help('Define el breadcrumb y la sección principal del producto.') ?></label>
-      <select name="primary_category_id" class="form-control">
-        <option value="">— Sin categoría principal —</option>
-        <?php foreach ($categories as $c): ?>
-          <option value="<?= (int) $c['id'] ?>" <?= ((int) ($selectedCategories['primary'] ?? 0) === (int) $c['id']) ? 'selected' : '' ?>><?= str_repeat('— ', (int) ($c['depth'] ?? 0)) . e($c['name']) ?></option>
+          <option value="<?= (int) $c['id'] ?>" <?= ($product && (int) ($product['category_id'] ?? 0) === (int) $c['id']) ? 'selected' : '' ?>><?= str_repeat('— ', (int) ($c['depth'] ?? 0)) . e($c['name']) ?></option>
         <?php endforeach; ?>
       </select>
-      <div class="form-hint">Define el breadcrumb y la sección principal del producto.</div>
     </div>
     <div class="form-group">
-      <label>Descripción corta <?= help('Resumen breve que aparece en tarjetas y resultados.') ?></label>
+      <label>Descripción corta</label>
       <input type="text" name="short_description" class="form-control" value="<?= e($product['short_description'] ?? '') ?>">
     </div>
     <div class="form-group">
-      <label>Descripción <?= help('Descripción completa de la ficha del producto.') ?></label>
+      <label>Descripción</label>
       <textarea name="description" class="form-control"><?= e($product['description'] ?? '') ?></textarea>
     </div>
 
     <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:14px;">
       <div class="form-group">
-        <label>Costo neto unitario <?= help('Costo del producto sin IVA.') ?></label>
+        <label>Costo neto unitario</label>
         <input type="number" step="0.01" name="cost" id="cost" class="form-control" value="<?= e($product['cost'] ?? '') ?>">
       </div>
       <div class="form-group">
-        <label>% ganancia <?= help('Margen sobre el costo; calcula el precio neto automáticamente.') ?></label>
+        <label>% ganancia</label>
         <input type="number" step="0.01" name="margin_percent" id="margin_percent" class="form-control" value="<?= e($product['margin_percent'] ?? '') ?>">
       </div>
       <div class="form-group">
-        <label>Precio neto (sin IVA) <?= help('Precio de venta sin IVA; el IVA se suma al pagar.') ?></label>
+        <label>Precio neto (sin IVA)</label>
         <input type="number" step="0.01" name="price" id="price" class="form-control" value="<?= e($product['price'] ?? '0') ?>" required>
       </div>
       <div class="form-group">
-        <label>Precio oferta (opcional) <?= help('Precio rebajado opcional.') ?></label>
+        <label>Precio oferta (opcional)</label>
         <input type="number" step="0.01" name="sale_price" class="form-control" value="<?= e($product['sale_price'] ?? '') ?>">
       </div>
       <div class="form-group">
-        <label>Stock <?= help('Cantidad disponible.') ?></label>
+        <label>Stock</label>
         <input type="number" name="stock" class="form-control" value="<?= (int) ($product['stock'] ?? 0) ?>">
       </div>
       <div class="form-group">
-        <label style="font-weight:normal;">
-          <input type="checkbox" name="track_stock" id="track_stock" <?= ((int) ($product['track_stock'] ?? 1)) ? 'checked' : '' ?>>
-          Controlar stock (desmárcalo para productos bajo pedido / sin stock limitado) <?= help('Desmárcalo para productos bajo pedido o sin stock limitado.') ?>
-        </label>
-      </div>
-      <div class="form-group">
-        <label>Impuesto <?= help('Impuesto aplicado al producto (por defecto IVA).') ?></label>
+        <label>Impuesto</label>
         <select name="tax_id" class="form-control">
           <option value="">— Por defecto —</option>
           <?php foreach ($taxes as $t): ?>
@@ -92,7 +73,7 @@
         </select>
       </div>
       <div class="form-group">
-        <label>Unidad de venta <?= help('Unidad en que se vende (unidad, pack, kilo…).') ?></label>
+        <label>Unidad de venta</label>
         <select name="unit" class="form-control">
           <?php foreach (product_units() as $u): ?>
             <option value="<?= e($u) ?>" <?= ($product['unit'] ?? 'unidad') === $u ? 'selected' : '' ?>><?= e(product_unit_label($u)) ?></option>
@@ -105,19 +86,19 @@
     <h3 style="margin:20px 0 8px;">Medidas y peso (para envío)</h3>
     <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:14px;">
       <div class="form-group">
-        <label>Peso (kg) <?= help('Peso para calcular el costo de envío.') ?></label>
+        <label>Peso (kg)</label>
         <input type="number" step="0.001" min="0" name="weight" class="form-control" value="<?= e($product['weight'] ?? '') ?>" placeholder="Ej: 1.000">
       </div>
       <div class="form-group">
-        <label>Largo (cm) <?= help('Dimensiones para calcular el envío.') ?></label>
+        <label>Largo (cm)</label>
         <input type="number" step="0.01" min="0" name="length" class="form-control" value="<?= e($product['length'] ?? '') ?>">
       </div>
       <div class="form-group">
-        <label>Ancho (cm) <?= help('Dimensiones para calcular el envío.') ?></label>
+        <label>Ancho (cm)</label>
         <input type="number" step="0.01" min="0" name="width" class="form-control" value="<?= e($product['width'] ?? '') ?>">
       </div>
       <div class="form-group">
-        <label>Alto (cm) <?= help('Dimensiones para calcular el envío.') ?></label>
+        <label>Alto (cm)</label>
         <input type="number" step="0.01" min="0" name="height" class="form-control" value="<?= e($product['height'] ?? '') ?>">
       </div>
     </div>
@@ -136,16 +117,16 @@
     </div>
 
     <div class="form-group">
-      <label>Meta título (SEO) <?= help('Título que muestra Google en los resultados.') ?></label>
+      <label>Meta título (SEO)</label>
       <input type="text" name="meta_title" class="form-control" value="<?= e($product['meta_title'] ?? '') ?>">
     </div>
     <div class="form-group">
-      <label>Meta descripción (SEO) <?= help('Descripción que muestra Google; ideal hasta ~155 caracteres.') ?></label>
+      <label>Meta descripción (SEO)</label>
       <textarea name="meta_description" class="form-control"><?= e($product['meta_description'] ?? '') ?></textarea>
     </div>
 
     <div class="form-group">
-      <label>Imágenes <?= help('Sube fotos JPG/PNG/WebP y marca una como portada.') ?></label>
+      <label>Imágenes</label>
       <input type="file" name="images[]" multiple accept="image/jpeg,image/png,image/webp">
       <div class="form-hint">JPG, PNG o WebP. Puedes subir varias a la vez; marca una como "principal" (portada).</div>
     </div>

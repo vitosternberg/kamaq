@@ -56,17 +56,6 @@ CREATE TABLE IF NOT EXISTS products (
   CONSTRAINT fk_products_category FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Pivote producto ↔ categoría (muchos-a-muchos). is_primary marca la categoría principal (breadcrumb).
-CREATE TABLE IF NOT EXISTS product_categories (
-  product_id INT UNSIGNED NOT NULL,
-  category_id INT UNSIGNED NOT NULL,
-  is_primary TINYINT(1) NOT NULL DEFAULT 0,
-  PRIMARY KEY (product_id, category_id),
-  KEY idx_pc_category (category_id),
-  CONSTRAINT fk_pc_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
-  CONSTRAINT fk_pc_category FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 CREATE TABLE IF NOT EXISTS product_images (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   product_id INT UNSIGNED NOT NULL,

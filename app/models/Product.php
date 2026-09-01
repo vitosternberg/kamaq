@@ -28,7 +28,6 @@ class Product extends Model
     }
 
     // Productos activos en una o varias categorías (por ejemplo, una categoría y sus hijas).
-    // Usa la tabla pivote product_categories: incluye los productos asignados a cualquier categoría del listado.
     public static function byCategories(array $ids): array
     {
         $ids = array_values(array_filter(array_map('intval', $ids)));
@@ -37,66 +36,12 @@ class Product extends Model
         }
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
         $stmt = static::db()->prepare(
-            'SELECT DISTINCT p.*, ' . self::COVER_SELECT . ' FROM products p
-             JOIN product_categories pc ON pc.product_id = p.id
-             WHERE pc.category_id IN (' . $placeholders . ') AND p.is_active = 1
+            'SELECT p.*, ' . self::COVER_SELECT . ' FROM products p
+             WHERE p.category_id IN (' . $placeholders . ') AND p.is_active = 1
              ORDER BY p.created_at DESC'
         );
         $stmt->execute($ids);
         return $stmt->fetchAll();
-    }
-
-    // Relaciones categoría↔producto (tabla pivote product_categories).
-    public static function categoriesFor(int $id): array
-    {
-        $stmt = static::db()->prepare('SELECT * FROM product_categories WHERE product_id = ?');
-        $stmt->execute([$id]);
-        return $stmt->fetchAll();
-    }
-
-    // Categorías seleccionadas de un producto: ['ids' => [int, ...], 'primary' => ?int].
-    // primary es la fila con is_primary=1, o la primera si no hay ninguna marcada.
-    public static function selectedCategoryIds(int $id): array
-    {
-        $rows = static::categoriesFor($id);
-        $ids = array_map(static fn ($row) => (int) $row['category_id'], $rows);
-        $primary = null;
-        foreach ($rows as $row) {
-            if ((int) $row['is_primary'] === 1) {
-                $primary = (int) $row['category_id'];
-                break;
-            }
-        }
-        if ($primary === null && $ids) {
-            $primary = $ids[0];
-        }
-        return ['ids' => $ids, 'primary' => $primary];
-    }
-
-    // Reemplaza las categorías de un producto y denormaliza la principal en products.category_id (back-compat).
-    public static function setCategories(int $id, array $categoryIds, ?int $primaryId): void
-    {
-        $ids = array_values(array_unique(array_filter(array_map('intval', $categoryIds))));
-        if ($primaryId !== null) {
-            $primaryId = (int) $primaryId;
-        }
-        if ($primaryId === null || !in_array($primaryId, $ids, true)) {
-            $primaryId = $ids[0] ?? null;
-        }
-
-        $stmt = static::db()->prepare('DELETE FROM product_categories WHERE product_id = ?');
-        $stmt->execute([$id]);
-
-        if ($ids) {
-            $insert = static::db()->prepare(
-                'INSERT INTO product_categories (product_id, category_id, is_primary) VALUES (?, ?, ?)'
-            );
-            foreach ($ids as $cid) {
-                $insert->execute([$id, $cid, $cid === $primaryId ? 1 : 0]);
-            }
-        }
-
-        static::update($id, ['category_id' => $primaryId]);
     }
 
     public static function findBySlug(string $slug): ?array
@@ -172,15 +117,13 @@ class Product extends Model
     public static function catalog(array $categoryIds, string $orderBy, int $page, int $perPage): array
     {
         $offset = ($page - 1) * $perPage;
-        // Con categorías filtra por la tabla pivote (un producto puede estar en varias categorías).
-        $sql = 'SELECT DISTINCT p.*, ' . self::COVER_SELECT . ' FROM products p';
+        $sql = 'SELECT p.*, ' . self::COVER_SELECT . ' FROM products p WHERE p.is_active = 1';
         $params = [];
         if ($categoryIds) {
             $placeholders = implode(',', array_fill(0, count($categoryIds), '?'));
-            $sql .= ' JOIN product_categories pc ON pc.product_id = p.id AND pc.category_id IN (' . $placeholders . ')';
+            $sql .= ' AND p.category_id IN (' . $placeholders . ')';
             $params = array_values($categoryIds);
         }
-        $sql .= ' WHERE p.is_active = 1';
         $sql .= ' ORDER BY ' . $orderBy . ' LIMIT ' . (int) $perPage . ' OFFSET ' . (int) $offset;
         $stmt = static::db()->prepare($sql);
         $stmt->execute($params);
@@ -189,14 +132,13 @@ class Product extends Model
 
     public static function catalogCount(array $categoryIds): int
     {
-        $sql = 'SELECT COUNT(DISTINCT p.id) FROM products p';
+        $sql = 'SELECT COUNT(*) FROM products p WHERE p.is_active = 1';
         $params = [];
         if ($categoryIds) {
             $placeholders = implode(',', array_fill(0, count($categoryIds), '?'));
-            $sql .= ' JOIN product_categories pc ON pc.product_id = p.id AND pc.category_id IN (' . $placeholders . ')';
+            $sql .= ' AND p.category_id IN (' . $placeholders . ')';
             $params = array_values($categoryIds);
         }
-        $sql .= ' WHERE p.is_active = 1';
         $stmt = static::db()->prepare($sql);
         $stmt->execute($params);
         return (int) $stmt->fetchColumn();
@@ -232,13 +174,7 @@ class Product extends Model
 
     public static function decrementStock(int $productId, int $quantity): void
     {
-        $stmt = static::db()->prepare('UPDATE products SET stock = GREATEST(stock - ?, 0) WHERE id = ? AND track_stock = 1');
-        $stmt->execute([$quantity, $productId]);
-    }
-
-    public static function incrementStock(int $productId, int $quantity): void
-    {
-        $stmt = static::db()->prepare('UPDATE products SET stock = stock + ? WHERE id = ? AND track_stock = 1');
+        $stmt = static::db()->prepare('UPDATE products SET stock = GREATEST(stock - ?, 0) WHERE id = ?');
         $stmt->execute([$quantity, $productId]);
     }
 

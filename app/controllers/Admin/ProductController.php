@@ -36,7 +36,6 @@ class ProductController extends Controller
             'images' => [],
             'categories' => Category::flatten(Category::treeWithCounts()),
             'taxes' => Tax::active(),
-            'selectedCategories' => ['ids' => [], 'primary' => null],
         ], 'admin');
     }
 
@@ -50,7 +49,6 @@ class ProductController extends Controller
         $data = $this->dataFromRequest();
         $data['slug'] = $this->uniqueSlug($data['slug'], null);
         $id = Product::create($data);
-        Product::setCategories($id, $_POST['category_ids'] ?? [], $_POST['primary_category_id'] ?? null);
         Product::update($id, ['sku' => Product::generateSku($id)]);
         $this->handleImages($id, $_FILES['images'] ?? null);
         flash('success', 'Producto creado.');
@@ -71,7 +69,6 @@ class ProductController extends Controller
             'images' => ProductImage::forProduct($id),
             'categories' => Category::flatten(Category::treeWithCounts()),
             'taxes' => Tax::active(),
-            'selectedCategories' => Product::selectedCategoryIds($id),
         ], 'admin');
     }
 
@@ -85,7 +82,6 @@ class ProductController extends Controller
         $data = $this->dataFromRequest();
         $data['slug'] = $this->uniqueSlug($data['slug'], $id);
         Product::update($id, $data);
-        Product::setCategories($id, $_POST['category_ids'] ?? [], $_POST['primary_category_id'] ?? null);
         $this->handleImages($id, $_FILES['images'] ?? null);
         flash('success', 'Producto actualizado.');
         redirect('/admin/productos/editar/' . $id);
@@ -183,12 +179,12 @@ class ProductController extends Controller
         return [
             'name' => $name,
             'slug' => $slug !== '' ? $slug : slugify($name),
+            'category_id' => ((int) ($_POST['category_id'] ?? 0)) ?: null,
             'short_description' => trim($_POST['short_description'] ?? ''),
             'description' => trim($_POST['description'] ?? ''),
             'price' => (float) ($_POST['price'] ?? 0),
             'sale_price' => $salePrice !== '' ? (float) $salePrice : null,
             'stock' => (int) ($_POST['stock'] ?? 0),
-            'track_stock' => isset($_POST['track_stock']) ? 1 : 0,
             'cost' => ($_POST['cost'] ?? '') !== '' ? (float) ($_POST['cost'] ?? 0) : null,
             'margin_percent' => ($_POST['margin_percent'] ?? '') !== '' ? (float) ($_POST['margin_percent'] ?? 0) : null,
             'tax_id' => ((int) ($_POST['tax_id'] ?? 0)) ?: null,

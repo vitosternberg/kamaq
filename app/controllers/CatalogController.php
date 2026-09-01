@@ -27,8 +27,7 @@ class CatalogController extends Controller
         $categoryId = (int) ($_GET['categoria'] ?? 0);
         $categoryIds = [];
         if ($categoryId > 0) {
-            // La categoría + todas sus subcategorías activas (recursivo).
-            $categoryIds = Category::activeDescendantIds($categoryId);
+            $categoryIds = array_merge([$categoryId], array_map(fn ($c) => (int) $c['id'], Category::children($categoryId)));
         }
 
         $total = Product::catalogCount($categoryIds);
@@ -99,8 +98,7 @@ class CatalogController extends Controller
 
         $categoryId = (int) $category['id'];
         $children = Category::children($categoryId);
-        // La categoría + todas sus subcategorías activas (recursivo), para listar sus productos.
-        $productCategoryIds = Category::activeDescendantIds($categoryId);
+        $productCategoryIds = array_merge([$categoryId], array_map(fn ($c) => (int) $c['id'], $children));
 
         $breadcrumbs = [
             ['label' => 'Inicio', 'url' => url('')],

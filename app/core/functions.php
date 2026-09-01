@@ -16,12 +16,6 @@ function e($value): string
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
-// Ícono "i" de ayuda (tooltip) para etiquetas de formularios.
-function help(string $text): string
-{
-    return '<span class="help" title="' . e($text) . '" aria-label="' . e($text) . '">i</span>';
-}
-
 function url(string $path = ''): string
 {
     $base = rtrim((string) config('app_url', ''), '/');
