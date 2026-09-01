@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Core\Model;
+use App\Models\Dte;
 
 class Order extends Model
 {
@@ -54,6 +55,13 @@ class Order extends Model
             'transbank_transaction_date' => self::normalizeTbkDate($tbk['transaction_date'] ?? null),
             'transbank_installments' => (int) ($tbk['installments_number'] ?? 0),
         ]);
+
+        // Emisión de DTE no-bloqueante: si falla, no debe romper el pago.
+        try {
+            Dte::emitForOrder($id);
+        } catch (\Throwable $e) {
+            error_log('Dte: emisión tras pago falló: ' . $e->getMessage());
+        }
     }
 
     public static function markRejected(int $id): void
@@ -74,22 +82,16 @@ class Order extends Model
 
     /**
      * Barrido lazy (se invoca en cada request): expira pedidos pendientes cuyo
-     * vencimiento (lifetime) o tope duro (hardCap) ya pasó, liberando su stock.
+     * vencimiento (expires_at) ya pasó, liberando su stock.
      * Usa un UPDATE "claim-first" para evitar doble liberación.
      */
-    public static function expireUnpaid(int $lifetimeMinutes = 15, int $hardCapMinutes = 30): int
+    public static function expireUnpaid(): int
     {
-        $hardCap = (int) $hardCapMinutes;
-
-        $stmt = static::db()->prepare(
+        $stmt = static::db()->query(
             "SELECT id FROM orders
              WHERE payment_status = 'pendiente'
-               AND (
-                   (expires_at IS NOT NULL AND expires_at < NOW())
-                OR (reserved_at IS NOT NULL AND reserved_at < NOW() - INTERVAL ? MINUTE)
-               )"
+               AND expires_at IS NOT NULL AND expires_at < NOW()"
         );
-        $stmt->execute([$hardCap]);
 
         $expired = 0;
         $claim = static::db()->prepare(

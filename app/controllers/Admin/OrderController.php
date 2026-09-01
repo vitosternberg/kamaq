@@ -4,6 +4,7 @@ namespace App\Controllers\Admin;
 
 use App\Core\Auth;
 use App\Core\Controller;
+use App\Models\Dte;
 use App\Models\Order;
 
 class OrderController extends Controller
@@ -31,6 +32,7 @@ class OrderController extends Controller
             'pageTitle' => 'Pedido ' . $order['order_number'],
             'order' => $order,
             'statuses' => self::STATUSES,
+            'dte' => Dte::forOrder($id),
         ], 'admin');
     }
 
@@ -46,9 +48,40 @@ class OrderController extends Controller
             Order::update($id, ['status' => $status]);
             if ($status === 'pagado') {
                 Order::update($id, ['payment_status' => 'pagado']);
+                // Emisión de DTE no-bloqueante: un fallo no debe romper la actualización.
+                try {
+                    Dte::emitForOrder($id);
+                } catch (\Throwable $e) {
+                    error_log('Dte: emisión al marcar pagado falló: ' . $e->getMessage());
+                }
             }
             flash('success', 'Estado actualizado.');
         }
+        redirect('/admin/pedidos/' . $id);
+    }
+
+    // Reintenta la emisión del DTE de un pedido (POST, protegido con CSRF).
+    public function retryDte(int $id): void
+    {
+        Auth::requireLogin();
+        if (!csrf_verify($_POST['csrf_token'] ?? null)) {
+            flash('error', 'Sesión inválida.');
+            redirect('/admin/pedidos/' . $id);
+        }
+
+        Dte::emitForOrder($id);
+
+        $dte = Dte::forOrder($id);
+        $estado = is_array($dte) ? (string) ($dte['estado'] ?? '') : '';
+        if ($estado === 'emitido') {
+            flash('success', 'DTE emitido correctamente.');
+        } elseif ($estado === 'config_pendiente') {
+            flash('error', 'DTE pendiente de configuración: falta libredte_hash en config.local.php.');
+        } else {
+            $glosa = is_array($dte) ? (string) ($dte['glosa'] ?? '') : '';
+            flash('error', 'No se pudo emitir el DTE.' . ($glosa !== '' ? ' ' . $glosa : ''));
+        }
+
         redirect('/admin/pedidos/' . $id);
     }
 }

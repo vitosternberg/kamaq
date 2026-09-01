@@ -16,6 +16,12 @@ function e($value): string
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
+// Ícono "i" de ayuda (tooltip) para etiquetas de formularios.
+function help(string $text): string
+{
+    return '<span class="help" title="' . e($text) . '" aria-label="' . e($text) . '">i</span>';
+}
+
 function url(string $path = ''): string
 {
     $base = rtrim((string) config('app_url', ''), '/');
@@ -146,6 +152,31 @@ function send_mail(string $to, string $subject, string $body): bool
     return @mail($to, $subject, $body, $headers);
 }
 
+// Correo con adjunto PDF (multipart/mixed, base64). Usado para enviar el DTE.
+function send_mail_attachment(string $to, string $subject, string $body, string $filename, string $pdfBinary): bool
+{
+    $from = (string) config('contact_email', 'contacto@kamaq.cl');
+    $boundary = '----=_kamaq_' . bin2hex(random_bytes(8));
+
+    $headers = "From: " . $from . "\r\n" .
+               "Reply-To: " . $from . "\r\n" .
+               "MIME-Version: 1.0\r\n" .
+               "Content-Type: multipart/mixed; boundary=\"" . $boundary . "\"\r\n";
+
+    $message = "--" . $boundary . "\r\n" .
+               "Content-Type: text/plain; charset=UTF-8\r\n" .
+               "Content-Transfer-Encoding: 8bit\r\n\r\n" .
+               $body . "\r\n\r\n" .
+               "--" . $boundary . "\r\n" .
+               "Content-Type: application/pdf; name=\"" . $filename . "\"\r\n" .
+               "Content-Disposition: attachment; filename=\"" . $filename . "\"\r\n" .
+               "Content-Transfer-Encoding: base64\r\n\r\n" .
+               chunk_split(base64_encode($pdfBinary)) . "\r\n" .
+               "--" . $boundary . "--\r\n";
+
+    return @mail($to, $subject, $message, $headers);
+}
+
 function quote_status_badge(string $status): string
 {
     $classes = [
@@ -239,4 +270,29 @@ function product_unit_label(string $unit): string
         'minuto' => 'Minuto',
     ];
     return $map[$unit] ?? $unit;
+}
+
+// Métodos de pago disponibles en el checkout.
+function payment_methods(): array
+{
+    return [
+        ['key' => 'webpay', 'label' => 'Transbank (Webpay)'],
+        ['key' => 'transferencia', 'label' => 'Transferencia bancaria'],
+    ];
+}
+
+function payment_method_label(string $key): string
+{
+    foreach (payment_methods() as $method) {
+        if ($method['key'] === $key) {
+            return $method['label'];
+        }
+    }
+    return $key;
+}
+
+// Etiqueta legible del tipo de documento (boleta/factura).
+function doc_type_label(string $key): string
+{
+    return $key === 'factura' ? 'Factura' : 'Boleta';
 }

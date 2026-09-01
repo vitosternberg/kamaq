@@ -6,9 +6,11 @@ use App\Core\Cart;
 use App\Core\Controller;
 use App\Core\CustomerAuth;
 use App\Core\Transbank;
+use App\Models\Company;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\Setting;
 use App\Models\Shipping;
 
 class CheckoutController extends Controller
@@ -28,12 +30,27 @@ class CheckoutController extends Controller
         $weight = Cart::weight();
         $options = Shipping::options($region, $weight);
 
+        // Documento del cliente: fijo en la cuenta (boleta/factura), no editable en checkout.
+        $doc = ['doc_type' => (string) ($customer['doc_type'] ?? 'boleta')];
+        if ($doc['doc_type'] === 'factura' && !empty($customer['company_id'])) {
+            $company = Company::find((int) $customer['company_id']);
+            if ($company) {
+                $doc['doc_rut'] = (string) ($company['rut'] ?? '');
+                $doc['doc_company'] = (string) ($company['razon_social'] ?? '');
+                $doc['doc_giro'] = (string) ($company['giro'] ?? '');
+            }
+        } else {
+            $doc['doc_rut'] = (string) ($customer['rut'] ?? '');
+        }
+
         $this->view('checkout/index', [
             'pageTitle' => 'Finalizar compra — KAMAQ',
             'items' => $items,
             'subtotal' => $subtotal,
             'tax' => $tax,
             'customer' => $customer,
+            'paymentMethods' => payment_methods(),
+            'doc' => $doc,
             'shippingOptions' => $options,
             'shipping' => $options ? $options[0]['price'] : 0.0,
             'weight' => $weight,
@@ -70,6 +87,24 @@ class CheckoutController extends Controller
         $total = $subtotal + $tax + $shipping;
         $orderNumber = 'KQ-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(4)));
 
+        $method = ($_POST['payment_method'] ?? 'webpay') === 'transferencia' ? 'transferencia' : 'webpay';
+
+        // Snapshot del documento (boleta/factura) tal como quedó definido en la cuenta.
+        $docType = (string) ($customer['doc_type'] ?? 'boleta');
+        $docRut = null;
+        $docCompany = null;
+        $docGiro = null;
+        if ($docType === 'factura' && !empty($customer['company_id'])) {
+            $company = Company::find((int) $customer['company_id']);
+            if ($company) {
+                $docRut = $company['rut'] ?? null;
+                $docCompany = $company['razon_social'] ?? null;
+                $docGiro = $company['giro'] ?? null;
+            }
+        } else {
+            $docRut = $customer['rut'] ?? null;
+        }
+
         $name = trim($_POST['name'] ?? '');
         if ($name === '') {
             $name = (string) $customer['name'];
@@ -103,11 +138,17 @@ class CheckoutController extends Controller
             'shipping' => $shipping,
             'shipping_method' => $optionName,
             'total' => $total,
-            'payment_method' => 'webpay',
+            'payment_method' => $method,
+            'doc_type' => $docType,
+            'doc_rut' => $docRut,
+            'doc_company' => $docCompany,
+            'doc_giro' => $docGiro,
             'payment_status' => 'pendiente',
             'status' => 'pendiente',
             'reserved_at' => $now,
-            'expires_at' => date('Y-m-d H:i:s', time() + 15 * 60),
+            'expires_at' => $method === 'transferencia'
+                ? date('Y-m-d H:i:s', time() + 24 * 60 * 60)
+                : date('Y-m-d H:i:s', time() + 15 * 60),
         ]);
 
         foreach ($items as $item) {
@@ -123,6 +164,17 @@ class CheckoutController extends Controller
                 'tax_rate' => tax_rate($item['tax_id']),
             ]);
             Product::decrementStock((int) $item['product']['id'], (int) $item['quantity']);
+        }
+
+        // Transferencia: sin Transbank; el pedido queda reservado 24 h (mensaje al cliente: 30 min).
+        if ($method === 'transferencia') {
+            Cart::clear();
+            $_SESSION['last_order'] = [
+                'order_number' => $orderNumber,
+                'total' => $total,
+                'payment_method' => 'transferencia',
+            ];
+            redirect('checkout/gracias');
         }
 
         // Reserva confirmada en el carrito; el pago ocurre en Webpay.
@@ -179,6 +231,7 @@ class CheckoutController extends Controller
             $_SESSION['last_order'] = [
                 'order_number' => $order['order_number'],
                 'total' => $order['total'],
+                'payment_method' => 'webpay',
             ];
             $this->goToThanks($order);
         }
@@ -193,9 +246,20 @@ class CheckoutController extends Controller
     {
         $order = $_SESSION['last_order'] ?? null;
         unset($_SESSION['last_order']);
+        $paymentMethod = is_array($order) ? (string) ($order['payment_method'] ?? 'webpay') : 'webpay';
+        $transfer = [
+            'holder' => (string) Setting::get('transfer_holder', ''),
+            'rut' => (string) Setting::get('transfer_rut', ''),
+            'bank' => (string) Setting::get('transfer_bank', ''),
+            'account_type' => (string) Setting::get('transfer_account_type', ''),
+            'account_number' => (string) Setting::get('transfer_account_number', ''),
+            'email' => (string) Setting::get('transfer_email', ''),
+        ];
         $this->view('checkout/thanks', [
             'pageTitle' => 'Gracias por tu pedido — KAMAQ',
             'order' => $order,
+            'paymentMethod' => $paymentMethod,
+            'transfer' => $transfer,
             'adsConversionId' => (string) config('ga_ads_conversion_id', ''),
             'breadcrumbs' => [
                 ['label' => 'Inicio', 'url' => url('')],

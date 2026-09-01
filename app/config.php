@@ -28,6 +28,21 @@ $config = [
     'tbk_commerce_code' => '597055555532',
     'tbk_api_key_id' => '597055555532',
     'tbk_api_key_secret' => '579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C',
+    // LibreDTE (boleta/factura electrónica) — ambiente CERTIFICACIÓN.
+    // libredte_hash se completa en config.local.php (placeholder '' = pendiente de configuración).
+    'libredte_api_base' => 'https://libredte.cl/api',
+    'libredte_hash' => '',   // placeholder; se completa en config.local.php
+    'libredte_certificacion' => true,
+    'emisor_rut' => '78.479.102-5',
+    'emisor_razon_social' => 'KAMAQ COMERCIAL Y SERVICIOS DE DISEÑO SPA',
+    'emisor_giro' => 'Comercio al por menor y por mayor de artículos y actividades de diseño',
+    'emisor_acteco' => '',
+    'emisor_direccion' => 'ANTONIO BELLET 193 OF 1210',
+    'emisor_comuna' => 'Providencia',
+    'emisor_ciudad' => 'Santiago',
+    'emisor_telefono' => '',
+    'emisor_email' => 'ereyes@kamaq.cl',
+    'dte_email_pdf' => true,
 ];
 
 $localFile = __DIR__ . '/config.local.php';

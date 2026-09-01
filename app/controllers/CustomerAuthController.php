@@ -32,6 +32,7 @@ class CustomerAuthController extends Controller
         }
 
         $type = ($_POST['customer_type'] ?? 'persona_natural') === 'empresa' ? 'empresa' : 'persona_natural';
+        $docType = ($type === 'empresa') ? 'factura' : 'boleta';
         $name = trim($_POST['name'] ?? '');
         $lastname = trim($_POST['lastname'] ?? '');
         $rut = normalize_rut($_POST['rut'] ?? '');
@@ -41,6 +42,7 @@ class CustomerAuthController extends Controller
         $companyAddress = trim($_POST['company_address'] ?? '');
         $companyEmail = trim($_POST['company_email'] ?? '');
         $companyPhone = trim($_POST['company_phone'] ?? '');
+        $giro = trim($_POST['giro'] ?? '');
         $password = (string) ($_POST['password'] ?? '');
         $region = trim($_POST['region'] ?? '');
         $city = trim($_POST['city'] ?? '');
@@ -60,6 +62,9 @@ class CustomerAuthController extends Controller
         if ($type === 'empresa') {
             if ($companyName === '') {
                 $errors[] = 'La razón social es obligatoria.';
+            }
+            if ($giro === '') {
+                $errors[] = 'El giro es obligatorio.';
             }
             if ($companyRut === '' || !valid_rut($companyRut)) {
                 $errors[] = 'Ingresa un RUT de empresa válido.';
@@ -93,6 +98,7 @@ class CustomerAuthController extends Controller
             $companyId = Company::create([
                 'rut' => $companyRut,
                 'razon_social' => $companyName,
+                'giro' => $giro !== '' ? $giro : null,
                 'address' => $companyAddress !== '' ? $companyAddress : null,
                 'email' => $companyEmail !== '' ? $companyEmail : null,
                 'phone' => $companyPhone !== '' ? $companyPhone : null,
@@ -102,6 +108,7 @@ class CustomerAuthController extends Controller
             'name' => trim($name . ' ' . $lastname),
             'rut' => $rut !== '' ? $rut : null,
             'company_id' => $companyId,
+            'doc_type' => $docType,
             'email' => $email,
             'password_hash' => password_hash($password, PASSWORD_DEFAULT),
             'phone' => trim($_POST['phone'] ?? ''),

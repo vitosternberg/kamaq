@@ -56,6 +56,17 @@ CREATE TABLE IF NOT EXISTS products (
   CONSTRAINT fk_products_category FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Pivote producto ↔ categoría (muchos-a-muchos). is_primary marca la categoría principal (breadcrumb).
+CREATE TABLE IF NOT EXISTS product_categories (
+  product_id INT UNSIGNED NOT NULL,
+  category_id INT UNSIGNED NOT NULL,
+  is_primary TINYINT(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (product_id, category_id),
+  KEY idx_pc_category (category_id),
+  CONSTRAINT fk_pc_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+  CONSTRAINT fk_pc_category FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS product_images (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   product_id INT UNSIGNED NOT NULL,
@@ -82,6 +93,7 @@ CREATE TABLE IF NOT EXISTS companies (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   rut VARCHAR(20) NOT NULL,
   razon_social VARCHAR(160) NOT NULL,
+  giro VARCHAR(160) NULL,
   address VARCHAR(255) NULL,
   email VARCHAR(160) NULL,
   phone VARCHAR(40) NULL,
@@ -96,6 +108,7 @@ CREATE TABLE IF NOT EXISTS customers (
   name VARCHAR(160) NOT NULL,
   rut VARCHAR(20) NULL,
   company_id INT UNSIGNED NULL,
+  doc_type VARCHAR(12) NOT NULL DEFAULT 'boleta',
   email VARCHAR(160) NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   phone VARCHAR(40) NULL,
@@ -135,6 +148,10 @@ CREATE TABLE IF NOT EXISTS orders (
   shipping_method VARCHAR(120) NULL,
   total DECIMAL(12,2) NOT NULL DEFAULT 0,
   payment_method VARCHAR(40) NULL,
+  doc_type VARCHAR(12) NULL,
+  doc_rut VARCHAR(20) NULL,
+  doc_company VARCHAR(160) NULL,
+  doc_giro VARCHAR(160) NULL,
   payment_status VARCHAR(24) NOT NULL DEFAULT 'pendiente',
   status VARCHAR(24) NOT NULL DEFAULT 'pendiente',
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -237,7 +254,13 @@ INSERT IGNORE INTO settings (`key`, `value`) VALUES
   ('shipping_rm_price', '3990'),
   ('shipping_free_threshold', '15000'),
   ('shipping_express_price', '4990'),
-  ('shipping_outside_price', '6990');
+  ('shipping_outside_price', '6990'),
+  ('transfer_holder', 'KAMAQ COMERCIAL Y SERVICIOS DE DISENO SPA'),
+  ('transfer_rut', '78.479.102-5'),
+  ('transfer_bank', 'Banco Bci / Mach'),
+  ('transfer_account_type', 'Cuenta corriente'),
+  ('transfer_account_number', '69588505'),
+  ('transfer_email', 'ereyes@kamaq.cl');
 
 INSERT IGNORE INTO categories (id, parent_id, name, slug, sort_order, is_active) VALUES
   (1, NULL, 'Regalos Corporativos', 'regalos-corporativos', 1, 1),
@@ -256,3 +279,22 @@ INSERT IGNORE INTO shipping_methods (id, name, price, is_active, sort_order) VAL
 
 INSERT IGNORE INTO taxes (id, name, rate, type, is_active, sort_order) VALUES
   (1, 'IVA', 19.00, 'IVA', 1, 1);
+
+-- DTE (boleta/factura electrónica vía LibreDTE).
+CREATE TABLE IF NOT EXISTS dtes (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  order_id INT UNSIGNED NOT NULL,
+  tipo TINYINT UNSIGNED NOT NULL,
+  folio BIGINT UNSIGNED NULL,
+  track_id VARCHAR(32) NULL,
+  codigo VARCHAR(64) NULL,
+  estado VARCHAR(24) NOT NULL DEFAULT 'pendiente',
+  glosa VARCHAR(255) NULL,
+  pdf_url VARCHAR(255) NULL,
+  certificacion TINYINT(1) NOT NULL DEFAULT 1,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_dtes_order_tipo (order_id, tipo),
+  KEY idx_dtes_order (order_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

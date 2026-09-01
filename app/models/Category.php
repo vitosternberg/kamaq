@@ -75,10 +75,34 @@ class Category extends Model
         return $ids;
     }
 
+    // Igual que descendantIds pero solo con categorías activas (para listados públicos).
+    public static function activeDescendantIds(int $categoryId): array
+    {
+        $childrenOf = [];
+        $rows = static::db()->query('SELECT id, parent_id FROM categories WHERE is_active = 1')->fetchAll();
+        foreach ($rows as $row) {
+            $childrenOf[(int) ($row['parent_id'] ?? 0)][] = (int) $row['id'];
+        }
+
+        $ids = [];
+        $stack = [$categoryId];
+        while ($stack) {
+            $current = array_pop($stack);
+            if (in_array($current, $ids, true)) {
+                continue;
+            }
+            $ids[] = $current;
+            foreach ($childrenOf[$current] ?? [] as $child) {
+                $stack[] = $child;
+            }
+        }
+        return $ids;
+    }
+
     public static function withCounts(): array
     {
         return static::db()->query(
-            'SELECT c.*, (SELECT COUNT(*) FROM products p WHERE p.category_id = c.id) AS product_count
+            'SELECT c.*, (SELECT COUNT(*) FROM product_categories pc WHERE pc.category_id = c.id) AS product_count
              FROM categories c
              ORDER BY c.sort_order ASC, c.name ASC'
         )->fetchAll();

@@ -114,6 +114,7 @@ $router->post('admin/productos/imagen/principal/{id}', 'App\Controllers\Admin\Pr
 $router->get('admin/pedidos', 'App\Controllers\Admin\OrderController@index');
 $router->get('admin/pedidos/{id}', 'App\Controllers\Admin\OrderController@show');
 $router->post('admin/pedidos/estado/{id}', 'App\Controllers\Admin\OrderController@updateStatus');
+$router->post('admin/pedidos/dte/{id}', 'App\Controllers\Admin\OrderController@retryDte');
 $router->get('admin/clientes', 'App\Controllers\Admin\CustomerController@index');
 $router->get('admin/clientes/{email}', 'App\Controllers\Admin\CustomerController@show');
 $router->get('admin/envios', 'App\Controllers\Admin\ShippingController@index');
@@ -149,7 +150,7 @@ if (config('maintenance_mode', false) && !str_starts_with($maintenancePath, 'adm
 
 // Barrido lazy de pedidos pendientes no pagados (libera stock de expirados).
 try {
-    \App\Models\Order::expireUnpaid(15, 30);
+    \App\Models\Order::expireUnpaid();
 } catch (\Throwable $e) {
     error_log('expireUnpaid: ' . $e->getMessage());
 }

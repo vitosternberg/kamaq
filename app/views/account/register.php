@@ -5,10 +5,10 @@
     <?= csrf_field() ?>
 
     <div class="form-group">
-      <label>Tipo de cuenta</label>
+      <label>Tipo de documento</label>
       <select name="customer_type" id="customer-type" class="form-control">
-        <option value="persona_natural" <?= old('customer_type', 'persona_natural') === 'persona_natural' ? 'selected' : '' ?>>Persona natural</option>
-        <option value="empresa" <?= old('customer_type', 'persona_natural') === 'empresa' ? 'selected' : '' ?>>Empresa</option>
+        <option value="persona_natural" <?= old('customer_type', 'persona_natural') === 'persona_natural' ? 'selected' : '' ?>>Boleta (persona natural)</option>
+        <option value="empresa" <?= old('customer_type', 'persona_natural') === 'empresa' ? 'selected' : '' ?>>Factura (empresa)</option>
       </select>
     </div>
 
@@ -20,6 +20,10 @@
       <div class="form-group">
         <label>Razón social *</label>
         <input type="text" name="company_name" class="form-control" value="<?= e(old('company_name')) ?>">
+      </div>
+      <div class="form-group">
+        <label>Giro *</label>
+        <input type="text" name="giro" class="form-control" value="<?= e(old('giro')) ?>" placeholder="Ej.: Fabricación de muebles">
       </div>
       <div class="form-group">
         <label>Dirección de la empresa</label>

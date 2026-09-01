@@ -46,6 +46,35 @@
     <?php endif; ?>
 
     <div class="form-group">
+      <label>Medio de pago</label>
+      <?php foreach ($paymentMethods as $i => $pm): ?>
+        <div>
+          <label style="font-weight:400; display:flex; align-items:center; gap:8px;">
+            <input type="radio" name="payment_method" value="<?= e($pm['key']) ?>" <?= $i === 0 ? 'checked' : '' ?>>
+            <?= e($pm['label']) ?>
+          </label>
+        </div>
+      <?php endforeach; ?>
+    </div>
+
+    <div class="form-group">
+      <label>Tipo de documento</label>
+      <div style="padding:10px 12px; border:1px solid var(--border); border-radius:var(--radius); background:#f7f7f7;">
+        <strong><?= e(doc_type_label($doc['doc_type'])) ?></strong>
+        <?php if ($doc['doc_type'] === 'factura'): ?>
+          <div class="form-hint" style="margin-top:6px;">
+            RUT: <?= e($doc['doc_rut']) ?><br>
+            Razón social: <?= e($doc['doc_company']) ?><br>
+            Giro: <?= e($doc['doc_giro']) ?>
+          </div>
+        <?php elseif (!empty($doc['doc_rut'])): ?>
+          <div class="form-hint" style="margin-top:6px;">RUT: <?= e($doc['doc_rut']) ?></div>
+        <?php endif; ?>
+        <div class="form-hint" style="margin-top:6px;">Se define al crear tu cuenta y no se puede cambiar aquí.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
       <label>Notas del pedido</label>
       <textarea name="notes" class="form-control"><?= e(old('notes')) ?></textarea>
     </div>
