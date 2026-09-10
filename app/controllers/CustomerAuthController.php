@@ -13,10 +13,10 @@ class CustomerAuthController extends Controller
     public function showRegister(): void
     {
         if (CustomerAuth::check()) {
-            redirect('checkout');
+            redirect('cuenta');
         }
         $this->view('account/register', [
-            'pageTitle' => 'Crear cuenta — KAMAQ',
+            'pageTitle' => 'Crear cuenta — delatierra',
             'breadcrumbs' => [
                 ['label' => 'Inicio', 'url' => url('')],
                 ['label' => 'Crear cuenta', 'url' => null],
@@ -75,6 +75,9 @@ class CustomerAuthController extends Controller
             if (!in_array($region, chile_regions(), true)) {
                 $errors[] = 'Selecciona tu región.';
             }
+            if (!is_delivery_commune($city)) {
+                $errors[] = 'Lo sentimos, no realizamos despacho a tu comuna. Disponible solo en Providencia, Las Condes, Lo Barnechea, Huechuraba, Vitacura y La Reina.';
+            }
         }
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $errors[] = 'Ingresa un correo válido.';
@@ -123,7 +126,7 @@ class CustomerAuthController extends Controller
         $link = absolute_url('cuenta/verificar/' . $verifyToken);
         send_mail(
             $email,
-            'Verifica tu cuenta en KAMAQ',
+            'Verifica tu cuenta en delatierra',
             "Hola " . trim($name . ' ' . $lastname) . ",\n\nConfirma tu correo abriendo este enlace:\n{$link}\n\nSi no creaste esta cuenta, ignora este mensaje."
         );
 
@@ -145,16 +148,16 @@ class CustomerAuthController extends Controller
         ]);
         CustomerAuth::login((int) $account['id']);
         flash('success', 'Cuenta verificada. ¡Bienvenido!');
-        redirect('checkout');
+        redirect(Cart::count() > 0 ? 'checkout' : 'cuenta');
     }
 
     public function showLogin(): void
     {
         if (CustomerAuth::check()) {
-            redirect('checkout');
+            redirect('cuenta');
         }
         $this->view('account/login', [
-            'pageTitle' => 'Iniciar sesión — KAMAQ',
+            'pageTitle' => 'Iniciar sesión — delatierra',
             'breadcrumbs' => [
                 ['label' => 'Inicio', 'url' => url('')],
                 ['label' => 'Iniciar sesión', 'url' => null],
@@ -183,7 +186,7 @@ class CustomerAuthController extends Controller
         }
 
         CustomerAuth::login((int) $account['id']);
-        redirect(Cart::count() > 0 ? 'checkout' : '');
+        redirect(Cart::count() > 0 ? 'checkout' : 'cuenta');
     }
 
     public function logout(): void
@@ -195,7 +198,7 @@ class CustomerAuthController extends Controller
     public function showForgot(): void
     {
         $this->view('account/forgot', [
-            'pageTitle' => 'Recuperar contraseña — KAMAQ',
+            'pageTitle' => 'Recuperar contraseña — delatierra',
             'breadcrumbs' => [
                 ['label' => 'Inicio', 'url' => url('')],
                 ['label' => 'Recuperar contraseña', 'url' => null],
@@ -213,15 +216,11 @@ class CustomerAuthController extends Controller
         $email = trim($_POST['email'] ?? '');
         $account = CustomerAccount::findByEmail($email);
         if ($account) {
-            $token = bin2hex(random_bytes(32));
-            CustomerAccount::update((int) $account['id'], [
-                'reset_token' => $token,
-                'reset_token_expires' => date('Y-m-d H:i:s', time() + 86400),
-            ]);
+            $token = CustomerAccount::issueResetToken((int) $account['id']);
             $link = absolute_url('cuenta/recuperar/' . $token);
             send_mail(
                 $email,
-                'Recupera tu contraseña en KAMAQ',
+                'Recupera tu contraseña en delatierra',
                 "Hola,\n\nPara cambiar tu contraseña abre este enlace:\n{$link}\n\nSi no lo pediste, ignora este mensaje."
             );
         }
@@ -238,7 +237,7 @@ class CustomerAuthController extends Controller
             redirect('cuenta/olvide');
         }
         $this->view('account/reset', [
-            'pageTitle' => 'Nueva contraseña — KAMAQ',
+            'pageTitle' => 'Nueva contraseña — delatierra',
             'token' => $token,
             'breadcrumbs' => [
                 ['label' => 'Inicio', 'url' => url('')],
@@ -261,16 +260,17 @@ class CustomerAuthController extends Controller
         }
 
         $password = (string) ($_POST['password'] ?? '');
+        $confirm = (string) ($_POST['password_confirm'] ?? '');
         if (strlen($password) < 6) {
             flash('error', 'La contraseña debe tener al menos 6 caracteres.');
             redirect('cuenta/recuperar/' . $token);
         }
+        if ($confirm !== $password) {
+            flash('error', 'Las contraseñas no coinciden.');
+            redirect('cuenta/recuperar/' . $token);
+        }
 
-        CustomerAccount::update((int) $account['id'], [
-            'password_hash' => password_hash($password, PASSWORD_DEFAULT),
-            'reset_token' => null,
-            'reset_token_expires' => null,
-        ]);
+        CustomerAccount::updatePassword((int) $account['id'], $password);
         flash('success', 'Contraseña actualizada. Inicia sesión.');
         redirect('cuenta/ingresar');
     }

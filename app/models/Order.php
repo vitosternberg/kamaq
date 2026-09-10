@@ -34,6 +34,98 @@ class Order extends Model
         return $row === false ? null : $row;
     }
 
+    public static function findByOrderNumber(string $orderNumber): ?array
+    {
+        $stmt = static::db()->prepare('SELECT * FROM orders WHERE order_number = ? LIMIT 1');
+        $stmt->execute([$orderNumber]);
+        $row = $stmt->fetch();
+        return $row === false ? null : $row;
+    }
+
+    // Búsqueda pública de seguimiento: nº de pedido + email del cliente.
+    public static function findByOrderNumberAndEmail(string $orderNumber, string $email): ?array
+    {
+        $stmt = static::db()->prepare('SELECT * FROM orders WHERE order_number = ? AND customer_email = ? LIMIT 1');
+        $stmt->execute([$orderNumber, $email]);
+        $row = $stmt->fetch();
+        return $row === false ? null : $row;
+    }
+
+    private static function customerScopeSql(): string
+    {
+        return '(customer_id = ? OR (customer_id IS NULL AND customer_email = ?))';
+    }
+
+    public static function forCustomer(int $customerId, string $email): array
+    {
+        $sql = 'SELECT * FROM orders WHERE ' . self::customerScopeSql() . ' ORDER BY created_at DESC';
+        $stmt = static::db()->prepare($sql);
+        $stmt->execute([$customerId, $email]);
+        return $stmt->fetchAll();
+    }
+
+    public static function findForCustomer(int $orderId, int $customerId, string $email): ?array
+    {
+        $sql = 'SELECT id FROM orders WHERE id = ? AND ' . self::customerScopeSql() . ' LIMIT 1';
+        $stmt = static::db()->prepare($sql);
+        $stmt->execute([$orderId, $customerId, $email]);
+        if ($stmt->fetch() === false) {
+            return null;
+        }
+        return static::withItems($orderId);
+    }
+
+    public static function statsForCustomer(int $customerId, string $email): array
+    {
+        $sql = 'SELECT COUNT(*) AS order_count,
+                       COALESCE(SUM(total), 0) AS total_spent,
+                       MIN(created_at) AS first_order,
+                       MAX(created_at) AS last_order
+                FROM orders
+                WHERE ' . self::customerScopeSql() . "
+                  AND status <> 'cancelado'";
+        $stmt = static::db()->prepare($sql);
+        $stmt->execute([$customerId, $email]);
+        $row = $stmt->fetch();
+        if ($row === false) {
+            return [
+                'order_count' => 0,
+                'total_spent' => 0.0,
+                'avg_ticket' => 0.0,
+                'first_order' => null,
+                'last_order' => null,
+            ];
+        }
+        $count = (int) $row['order_count'];
+        $total = (float) $row['total_spent'];
+        return [
+            'order_count' => $count,
+            'total_spent' => $total,
+            'avg_ticket' => $count > 0 ? $total / $count : 0.0,
+            'first_order' => $row['first_order'],
+            'last_order' => $row['last_order'],
+        ];
+    }
+
+    public static function topProductsForCustomer(int $customerId, string $email, int $limit = 8): array
+    {
+        $limit = max(1, min(20, $limit));
+        $sql = 'SELECT oi.product_id,
+                       oi.product_name,
+                       SUM(oi.quantity) AS total_qty,
+                       SUM(oi.subtotal) AS total_spent
+                FROM order_items oi
+                INNER JOIN orders o ON o.id = oi.order_id
+                WHERE ' . self::customerScopeSql() . "
+                  AND o.status <> 'cancelado'
+                GROUP BY oi.product_id, oi.product_name
+                ORDER BY total_qty DESC
+                LIMIT {$limit}";
+        $stmt = static::db()->prepare($sql);
+        $stmt->execute([$customerId, $email]);
+        return $stmt->fetchAll();
+    }
+
     // Normaliza la fecha de Transbank (ISO 8601, con fracción y zona horaria) a DATETIME MySQL.
     private static function normalizeTbkDate($transactionDate): ?string
     {
@@ -69,6 +161,12 @@ class Order extends Model
         static::update($id, ['payment_status' => 'rechazado']);
     }
 
+    // Pago anulado/abandonado por el usuario en el formulario de Webpay.
+    public static function markCancelled(int $id): void
+    {
+        static::update($id, ['payment_status' => 'cancelado', 'status' => 'cancelado']);
+    }
+
     // Devuelve al inventario el stock reservado de un pedido.
     public static function releaseStock(int $orderId): void
     {
@@ -87,27 +185,8 @@ class Order extends Model
      */
     public static function expireUnpaid(): int
     {
-        $stmt = static::db()->query(
-            "SELECT id FROM orders
-             WHERE payment_status = 'pendiente'
-               AND expires_at IS NOT NULL AND expires_at < NOW()"
-        );
-
-        $expired = 0;
-        $claim = static::db()->prepare(
-            "UPDATE orders
-             SET payment_status = 'expirado', status = 'cancelado'
-             WHERE id = ? AND payment_status = 'pendiente'"
-        );
-
-        foreach ($stmt->fetchAll() as $order) {
-            $claim->execute([(int) $order['id']]);
-            if ($claim->rowCount() === 1) {
-                self::releaseStock((int) $order['id']);
-                $expired++;
-            }
-        }
-
-        return $expired;
+        // Sin control de stock: no se expiran/cancelan pedidos pendientes
+        // automáticamente ni se libera inventario.
+        return 0;
     }
 }

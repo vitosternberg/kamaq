@@ -290,3 +290,16 @@ function doc_type_label(string $key): string
 {
     return $key === 'factura' ? 'Factura' : 'Boleta';
 }
+
+function order_status_label(string $status): string
+{
+    $map = [
+        'pendiente' => 'Pendiente',
+        'pagado' => 'Pagado',
+        'enviado' => 'Enviado',
+        'entregado' => 'Entregado',
+        'cancelado' => 'Cancelado',
+        'rechazado' => 'Rechazado',
+    ];
+    return $map[$status] ?? ucfirst($status);
+}

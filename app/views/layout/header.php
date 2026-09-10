@@ -6,7 +6,7 @@ $serviceCategories = \App\Models\Category::roots();
 <header class="site-header">
   <div class="container">
     <div class="header-main">
-      <a class="brand" href="<?= url('') ?>"><?= e(config('app_name', 'KAMAQ')) ?></a>
+      <a class="brand" href="<?= url('') ?>"><?= e(config('app_name', 'delatierra')) ?></a>
       <form class="header-search" action="<?= url('buscar') ?>" method="get" role="search">
         <input type="search" name="q" id="search-input" autocomplete="off" placeholder="Buscar productos, regalos y más…" aria-label="Buscar" value="<?= e($_GET['q'] ?? '') ?>" data-suggest="<?= url('buscar/sugerencias') ?>" data-product-base="<?= url('producto') ?>">
         <button type="submit" aria-label="Buscar">
@@ -14,7 +14,8 @@ $serviceCategories = \App\Models\Category::roots();
         </button>
       </form>
       <?php if ($customer): ?>
-        <a class="account-link" href="<?= url('cuenta/salir') ?>">Salir</a>
+        <a class="account-link" href="<?= url('cuenta') ?>">Mi cuenta</a>
+        <a class="account-link account-link--muted" href="<?= url('cuenta/salir') ?>">Salir</a>
       <?php else: ?>
         <a class="account-link" href="<?= url('cuenta/ingresar') ?>">Ingresar</a>
       <?php endif; ?>
@@ -37,8 +38,7 @@ $serviceCategories = \App\Models\Category::roots();
         </div>
       </div>
       <a href="<?= url('catalogo') ?>">Catálogo</a>
-      <a href="<?= url('corporativo') ?>">Corporativo</a>
-      <a href="<?= url('proyectos') ?>">Proyectos</a>
+      <a href="<?= url('seguimiento') ?>">Seguir mi pedido</a>
       <a href="<?= url('contacto') ?>">Contacto</a>
     </nav>
   </div>
